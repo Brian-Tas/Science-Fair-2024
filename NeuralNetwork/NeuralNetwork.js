@@ -31,15 +31,24 @@ class NeuralNetwork {
     }
     
     // Create connectors & neurons for each
-    const typeMap = ['sensors', 'hiddens', 'outputs'];
+    const typeMap = ['sensors', 'hiddens', 'outputs', 'bias'];
 
     // Construct neurons
     this.neurons = new Map();
 
+    this.neurons.set(0, new Neuron(0, typeMap[3]));
+
     for(let j = 0; j < this.genome.neurons.length; j++) {
       for(let i = 0; i < this.genome.neurons[j].length; i++) {
-        //this.neurons.push(new Neuron(this.genome.neurons[j][i], typeMap[j]));
-        this.neurons.set(this.genome.neurons[j][i], new Neuron(this.genome.neurons[j][i], typeMap[j]));
+
+        const neuronId = this.genome.neurons[j][i];
+
+        if(neuronId === 0) {
+          console.error("Dont set neuron to bias node");
+          process.exit(1);
+        }
+
+        this.neurons.set(neuronId, new Neuron(neuronId, typeMap[j]));
       }
 
       this.neurons.set(typeMap[j], this.genome.neurons[j]);
@@ -100,6 +109,10 @@ class NeuralNetwork {
         this.order.unshift(connectorsId);
       } 
     }
+
+    // Sets bias node
+    this.neurons.get(0).value = 1;
+    
     // Entire process ends
   }
   fireConnector(id) {
@@ -129,7 +142,17 @@ class NeuralNetwork {
       toNeuronId.value += fromNeuronId.value * firingConnector.weight;
     }
   }
-  run() {
+  run(...args) {
+    if(args.length !== this.neurons.get("sensors").length) {
+      console.error("NN arguments are different to sensor neurons");
+      process.exit(1);
+    }
+
+    // Iterates through args and set inputs accordingly
+    for(let i = 0; i < args.length; i++) {
+      this.neurons.get(this.neurons.get("sensors")[i]).value = args[i];
+    }
+
     // Iterates through all layers
     for(let i = 0; i < this.order.length; i++) {
 
@@ -138,6 +161,14 @@ class NeuralNetwork {
         this.fireConnector(this.order[i][j]);
       }
     }
+
+    const outputs = [];
+
+    for(let i = 0; i < this.neurons.get("outputs").length; i++) {
+      outputs.push(this.neurons.get(this.neurons.get("outputs")[i]).value);
+    }
+
+    return outputs;
   }
 }
 
