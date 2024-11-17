@@ -149,7 +149,7 @@ class NeuralNetwork {
   }
   run(...args) {
     if(args.length !== this.neurons.get("sensors").length) {
-      console.error("NN arguments are different to sensor neurons");
+      console.error(`NN arguments are different to sensor neurons. Inputs: "${args}" Sensors: ${this.neurons.get("sensors").length}`);
       throw new Error("issue above");
     }
 

@@ -10,7 +10,7 @@ class Genome {
         console.log("No neurons provided, using default");
       }
       if(weights.length !== innovIds.length) {
-        console.error("Innovation Id's aren't matched to innovation weights at Genome");
+        console.error(`Innovation Id's aren't matched to innovation weights at Genome. Innovations: "${innovIds}" weights: ${weights}`);
         throw new Error("issue above");
       }
   

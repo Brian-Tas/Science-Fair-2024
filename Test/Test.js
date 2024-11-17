@@ -4,15 +4,17 @@ const { NeuralNetwork } = require("../NeuralNetwork/NeuralNetwork");
 // Import tasks for testing
 const { getAnswers, swap, XOR, AND, XOR3 } = require("../Tasks")
 
-// Import networks
-const network1JSON = require("./Networks/Network1.json");
-const network2JSON = require("./Networks/Network2.json");
-const network3JSON = require("./Networks/Network3.json");
+const { toNetwork } = require("../Storage/toNetwork");
 
-console.table(network1JSON);
+const networks = [];
 
-const network1 = new NeuralNetwork(network1JSON.genome, network1JSON.innovTable);
-const network2 = new NeuralNetwork(network2JSON.genome, network2JSON.innovTable);
-const network3 = new NeuralNetwork(network3JSON.genome, network3JSON.innovTable);
+for(let i = 1; i < 4; i++) {
+    const netObj = toNetwork(`../Test/Networks/Network${i}.json`);
+    console.table(netObj)
 
-console.table(getAnswers(network1, XOR));
+    networks.push(
+        new NeuralNetwork(netObj.genome, netObj.innovationTable)
+    );
+}
+
+console.table(networks[0].run(1, 1));
