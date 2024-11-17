@@ -5,11 +5,11 @@ class Innovation {
     //error handling
     if(typeof from === 'undefined') {
       console.error('No "from" input provided to new innovation');
-      process.exit(1);
+      throw new Error("issue above");
     }
     if(typeof to === 'undefined') {
       console.error('No "to" input provided to new innovation');
-      process.exit(1);
+      throw new Error("issue above");
     }
     
     this.from = from;

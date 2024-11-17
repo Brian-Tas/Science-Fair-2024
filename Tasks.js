@@ -29,7 +29,7 @@ const getTable = gate => {
   return outputs;
 }
 
-const getFitness = (neuralNetwork, gate) => {
+const getAnswers = (neuralNetwork, gate) => {
   const inputTable = getCombos(gate.length);
   let answers = new Map();
 
@@ -41,4 +41,4 @@ const getFitness = (neuralNetwork, gate) => {
 }
 
 
-module.exports = { getFitness, swap, XOR, AND, XOR3 }
+module.exports = { getAnswers, swap, XOR, AND, XOR3 }

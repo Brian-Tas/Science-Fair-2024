@@ -11,7 +11,7 @@ class Genome {
       }
       if(weights.length !== innovIds.length) {
         console.error("Innovation Id's aren't matched to innovation weights at Genome");
-        process.exit(1);
+        throw new Error("issue above");
       }
   
       this.ids = innovIds;

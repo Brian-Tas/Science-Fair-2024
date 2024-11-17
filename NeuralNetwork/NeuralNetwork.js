@@ -2,6 +2,11 @@
 const { Connector } = require("./Connector.js");
 const { Neuron } = require("./Neuron.js");
 
+// Activation functions
+const sigmoid = n => {
+  return 1 / (1 + Math.exp(-n));
+}
+
 class NeuralNetwork {
   constructor(genome, innovationTable) {
     //Genome = [[innov id, weight],[innov id, weight]...]
@@ -13,12 +18,12 @@ class NeuralNetwork {
 
     if(typeof this.genome !== 'object') {
       console.error(`Please pass through a valid genome. Genome should be an object. Genome passed through: ${this.genome}`);
-      process.exit(1);
+      throw new Error("issue above");
     }
 
     if(typeof this.innovationTable !== 'array' && typeof this.innovationTable[0] !== 'object') {
       console.error(`Pass through a valid innovation table. First value should be an object, but is instead: ${this.innovationTable[0]}`);
-      process.exit(1);
+      throw new Error("issue above");
     }
     
     // List of all innovations this specific neural network has    
@@ -45,7 +50,7 @@ class NeuralNetwork {
 
         if(neuronId === 0) {
           console.error("Dont set neuron to bias node");
-          process.exit(1);
+          throw new Error("issue above");
         }
 
         this.neurons.set(neuronId, new Neuron(neuronId, typeMap[j]));
@@ -118,14 +123,14 @@ class NeuralNetwork {
   fireConnector(id) {
     if(typeof id !== 'number') {
       console.error(`Id is not a number at FireConnector(). Id: ${id}`);
-      process.exit(1);
+      throw new Error("issue above");
     }
 
     const firingConnector = this.connectors.get(id);
 
     if(typeof firingConnector === 'undefined') {
       console.error(`No connector with id of: "${id}" found at FireConnector()`);
-      process.exit(1);
+      throw new Error("issue above");
     }
 
     if(firingConnector.status) {
@@ -136,16 +141,16 @@ class NeuralNetwork {
 
       if(typeof firingNeurons[0] === 'undefined' || typeof firingNeurons[1] === 'undefined') {
         console.error(`No neuron with id of either "${fromNeuronId}" or "${toNeuronId}"`);
-        process.exit(1);
+        throw new Error("issue above");
       }
 
-      toNeuronId.value += fromNeuronId.value * firingConnector.weight;
+      toNeuronId.value += sigmoid(fromNeuronId.value * firingConnector.weight);
     }
   }
   run(...args) {
     if(args.length !== this.neurons.get("sensors").length) {
       console.error("NN arguments are different to sensor neurons");
-      process.exit(1);
+      throw new Error("issue above");
     }
 
     // Iterates through args and set inputs accordingly

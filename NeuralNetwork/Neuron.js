@@ -2,12 +2,12 @@ class Neuron {
     constructor(id, type, value=0) {
       if(typeof id === 'undefined') {
         console.error('No id provided for Neuron construction');
-        process.exit(1);
+        throw new Error("issue above");
       }
 
       if(typeof type === 'undefined') {
         console.error('No type specified at Neuron construction');
-        process.exit(1);
+        throw new Error("issue above");
       }
   
       this.id = id;
