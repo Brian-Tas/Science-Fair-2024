@@ -144,7 +144,7 @@ class NeuralNetwork {
         throw new Error("issue above");
       }
 
-      toNeuronId.value += sigmoid(fromNeuronId.value * firingConnector.weight);
+      toNeuronId.value += sigmoid(fromNeuronId.value)  * firingConnector.weight;
     }
   }
   run(...args) {

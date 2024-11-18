@@ -12,14 +12,14 @@ const toNetwork = path => {
             new Innovation(...JSONnetwork.innovationTable[i])
         );
     }
-    
+    debugger;
     const genome = new Genome(
         JSONnetwork.genome.neurons, 
         JSONnetwork.genome.weights, 
         JSONnetwork.genome.ids
     );
     
-    
+
     const network = {
         genome: genome,
         innovationTable: innovationTable
