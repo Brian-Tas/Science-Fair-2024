@@ -19,4 +19,4 @@ console.log(networks[0].innovations)
 console.log(networks[0].genome.weights)
 console.log(networks[0].order)
 
-console.log(networks[2].run(1));
+console.log(networks[0].run(2))
