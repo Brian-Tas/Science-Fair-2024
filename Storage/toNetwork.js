@@ -1,3 +1,5 @@
+const { NeuralNetwork } = require("../NeuralNetwork/NeuralNetwork");
+
 
 const toNetwork = path => {
     const JSONnetwork = require(path);
@@ -12,20 +14,14 @@ const toNetwork = path => {
             new Innovation(...JSONnetwork.innovationTable[i])
         );
     }
-    debugger;
+    
     const genome = new Genome(
         JSONnetwork.genome.neurons, 
         JSONnetwork.genome.weights, 
         JSONnetwork.genome.ids
     );
-    
 
-    const network = {
-        genome: genome,
-        innovationTable: innovationTable
-    }
-
-    return network;
+    return new NeuralNetwork(genome, innovationTable);
 }
 
 module.exports = { toNetwork }
