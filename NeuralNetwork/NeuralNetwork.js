@@ -170,7 +170,7 @@ class NeuralNetwork {
     const outputs = [];
 
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
-      outputs.push(this.neurons.get(this.neurons.get("outputs")[i]).value);
+      outputs.push(sigmoid(this.neurons.get(this.neurons.get("outputs")[i]).value));
     }
 
     return outputs;
