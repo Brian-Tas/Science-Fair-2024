@@ -7,14 +7,19 @@ const sigmoid = n => {
   return 1 / (1 + Math.exp(-n));
 }
 
+const tanh = n => {
+  return Math.tanh(n);
+}
+
 class NeuralNetwork {
-  constructor(genome, innovationTable) {
+  constructor(genome, innovationTable, activationFunctions=["tanh", "tanh"]) {
     //Genome = [[innov id, weight],[innov id, weight]...]
     //Innov Table = [innov, innov...]
 
     // Class scoped innovation table
     this.innovationTable = innovationTable;
     this.genome = genome;
+    this.activationFunctions = activationFunctions;
 
     if(typeof this.genome !== 'object') {
       console.error(`Please pass through a valid genome. Genome should be an object. Genome passed through: ${this.genome}`);
@@ -120,6 +125,10 @@ class NeuralNetwork {
     
     // Entire process ends
   }
+  static activationFunctionMap = new Map([
+    ["tanh", tanh],
+    ["sigmoid", sigmoid]
+  ]);
   fireConnector(id) {
     if(typeof id !== 'number') {
       console.error(`Id is not a number at FireConnector(). Id: ${id}`);
@@ -144,7 +153,7 @@ class NeuralNetwork {
         throw new Error("issue above");
       }
 
-      toNeuronId.value += sigmoid(fromNeuronId.value)  * firingConnector.weight;
+      toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
     }
   }
   run(...args) {
@@ -170,7 +179,7 @@ class NeuralNetwork {
     const outputs = [];
 
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
-      outputs.push(sigmoid(this.neurons.get(this.neurons.get("outputs")[i]).value));
+      outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value));
     }
 
     return outputs;

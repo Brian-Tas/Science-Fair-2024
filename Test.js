@@ -9,13 +9,11 @@ const { toNetwork } = require("./Storage/toNetwork");
 const networks = [];
 
 for(let i = 1; i < 4; i++) {
-    networks.push(
-        toNetwork(`./Networks/Test/Network${i}.json`)
-    );
+    networks.push(toNetwork(`./Networks/Test/Network${i}.json`));
 }
 
-console.log(networks[0].innovations)
-console.log(networks[0].genome.weights)
-console.log(networks[0].order)
+console.log(networks[0].innovations);
+console.log(networks[0].genome.weights);
+console.log(networks[0].order);
 
-console.log(networks[0].run(2))
+console.log(networks[1].run(0, 1));
