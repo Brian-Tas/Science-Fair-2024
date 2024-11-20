@@ -164,7 +164,7 @@ class NeuralNetwork {
 
     // Iterates through args and set inputs accordingly
     for(let i = 0; i < args.length; i++) {
-      this.neurons.get(this.neurons.get("sensors")[i]).value = args[i];
+      this.neurons.get(this.neurons.get("sensors")[i]).value = args[i] * 2 - 1;
     }
 
     // Iterates through all layers
@@ -179,7 +179,7 @@ class NeuralNetwork {
     const outputs = [];
 
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
-      outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value));
+      outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value)/2 - 0.5);
     }
 
     return outputs;
