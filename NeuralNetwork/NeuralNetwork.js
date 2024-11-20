@@ -179,7 +179,7 @@ class NeuralNetwork {
     const outputs = [];
 
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
-      outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value)/2 - 0.5);
+      outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value)/2 + 0.5);
     }
 
     return outputs;
