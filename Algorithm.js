@@ -4,7 +4,6 @@ const settings = require("./Storage/Settings.json");
 // Import operations- i.e. crossover/mutation
 const { toGenomes } = require("./Operations/toGenomes");
 const { mutate } = require("./Operations/Mutate");
-const { innov } = require("./Operations/newInnov");
 
 //const { crossover } = require("./Operations/Crossover");
 
@@ -14,15 +13,24 @@ const { toNetwork } = require("./Storage/toNetwork");
 // Import logic gates + testing
 const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 
+// Import innovation
+const { Innovation } = require("./NeuralNetwork/Innovation");
 
 
 const networks = [];
-const innovationTable = [];
+const innovationTable = new Map();
 
-for(let i = 0; i < settings.population; i++) {
-    networks.push(toNetwork("./Networks/Blank21.json"));
+const newInnovation = arr => {
+    const innovation = new Innovation(arr[0], arr[1]);
+
+    innovationTable.set(`${arr[0]}-${arr[1]}`, innovation);
+    innovationTable.set(innovation.id, innovation);
 }
 
-console.table(networks[0].neurons)
+settings.startingInnovationTable.forEach(innov => newInnovation(innov));
 
-innov("1-2");
+for(let i = 0; i < settings.population; i++) {
+    networks.push(toNetwork("./Networks/Blank21.json"), innovationTable);
+}
+
+console.table(innovationTable)
