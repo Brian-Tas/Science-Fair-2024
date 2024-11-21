@@ -20,6 +20,4 @@ for(let i = 0; i < settings.population; i++) {
     networks.push(toNetwork("./Networks/Blank21.json"));
 }
 
-const genomes = toGenomes(networks);
-
-console.table(genomes)
+console.table(networks[0].neurons)
