@@ -2,7 +2,6 @@
 const settings = require("./Storage/Settings.json");
 
 // Import operations- i.e. crossover/mutation
-const { toGenomes } = require("./Operations/toGenomes");
 const { mutate } = require("./Operations/Mutate");
 
 //const { crossover } = require("./Operations/Crossover");
@@ -29,8 +28,9 @@ const newInnovation = arr => {
 
 settings.startingInnovationTable.forEach(innov => newInnovation(innov));
 
+
 for(let i = 0; i < settings.population; i++) {
-    networks.push(toNetwork("./Networks/Blank21.json"), innovationTable);
+    networks.push(toNetwork("./Networks/Blank21.json", innovationTable));
 }
 
-console.table(innovationTable)
+console.log(networks);

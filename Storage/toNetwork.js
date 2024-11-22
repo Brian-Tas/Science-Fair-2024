@@ -9,6 +9,8 @@ const toNetwork = (path, innovationTable) => {
 
     if(innovationTable === undefined && JSONnetwork.innovationTable === undefined) {
         console.error("No innovation table passed to toNetwork()");
+        console.log(innovationTable);
+        console.log(JSONnetwork.innovationTable);
         throw new Error("Issue above")
     }   
     

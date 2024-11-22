@@ -26,8 +26,8 @@ class NeuralNetwork {
       throw new Error("issue above");
     }
 
-    if(typeof this.innovationTable !== 'array' && typeof this.innovationTable[0] !== 'object') {
-      console.error(`Pass through a valid innovation table. First value should be an object, but is instead: ${this.innovationTable[0]}`);
+    if(typeof this.innovationTable !== "object") {
+      console.error(`Pass through a valid innovation table. First value should be an object, but is instead: ${this.innovationTable}`);
       throw new Error("issue above");
     }
     
@@ -36,7 +36,7 @@ class NeuralNetwork {
 
     for(let i = 0; i < this.genome.ids.length; i++) {
       this.innovations.push(
-        this.innovationTable[this.genome.ids[i]]
+        this.innovationTable.get(this.genome.ids[i])
       );
     }
     
@@ -67,7 +67,7 @@ class NeuralNetwork {
     // Construct connectors and assign nodes a "to" value
     this.connectors = new Map();
     
-    for(let i = 0; i < this.innovations.length; i++) {
+    for(let i = 0; i < this.innovations.length/2; i++) {
       const newConnector = new Connector(this.innovations[i], this.genome.weights[i], true);
       this.connectors.set(newConnector.id, newConnector);
 
@@ -78,7 +78,7 @@ class NeuralNetwork {
     this.order = this.genome.order;
     
     if(this.order === null) {
-      this.order = [];
+      this.order = [[],[]];
 
       let currentNeuronLevel = this.neurons.get("outputs");
 
@@ -116,7 +116,8 @@ class NeuralNetwork {
           break;
         }
 
-        this.order.unshift(connectorsId);
+        this.order[0].unshift(connectorsId);
+        this.order[1].unshift(currentNeuronLevel);
       } 
     }
 
@@ -168,11 +169,11 @@ class NeuralNetwork {
     }
 
     // Iterates through all layers
-    for(let i = 0; i < this.order.length; i++) {
+    for(let i = 0; i < this.order[0].length; i++) {
 
       // Iterates through all connection in layer
-      for(let j = 0; j < this.order[i].length; j++) {
-        this.fireConnector(this.order[i][j]);
+      for(let j = 0; j < this.order[0][i].length; j++) {
+        this.fireConnector(this.order[0][i][j]);
       }
     }
 
