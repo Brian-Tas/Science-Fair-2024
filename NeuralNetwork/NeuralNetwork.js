@@ -67,7 +67,7 @@ class NeuralNetwork {
     // Construct connectors and assign nodes a "to" value
     this.connectors = new Map();
     
-    for(let i = 0; i < this.innovations.length/2; i++) {
+    for(let i = 0; i < this.innovations.length; i++) {
       const newConnector = new Connector(this.innovations[i], this.genome.weights[i], true);
       this.connectors.set(newConnector.id, newConnector);
 
@@ -78,7 +78,7 @@ class NeuralNetwork {
     this.order = this.genome.order;
     
     if(this.order === null) {
-      this.order = [[],[]];
+      this.order = [];
 
       let currentNeuronLevel = this.neurons.get("outputs");
 
@@ -102,7 +102,6 @@ class NeuralNetwork {
           connectorsId.push(connectors[i].id);
         }
 
-
         currentNeuronLevel = [];
 
         for(let i = 0; i < connectors.length; i++) {
@@ -116,10 +115,11 @@ class NeuralNetwork {
           break;
         }
 
-        this.order[0].unshift(connectorsId);
-        this.order[1].unshift(currentNeuronLevel);
+        this.order.unshift(connectorsId);
       } 
     }
+
+    this.genome.order = this.order
 
     // Sets bias node
     this.neurons.get(0).value = 1;
@@ -169,11 +169,11 @@ class NeuralNetwork {
     }
 
     // Iterates through all layers
-    for(let i = 0; i < this.order[0].length; i++) {
+    for(let i = 0; i < this.order.length; i++) {
 
       // Iterates through all connection in layer
-      for(let j = 0; j < this.order[0][i].length; j++) {
-        this.fireConnector(this.order[0][i][j]);
+      for(let j = 0; j < this.order[i].length; j++) {
+        this.fireConnector(this.order[i][j]);
       }
     }
 

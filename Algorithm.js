@@ -15,22 +15,15 @@ const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 // Import innovation
 const { Innovation } = require("./NeuralNetwork/Innovation");
 
+settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
 
-const networks = [];
-const innovationTable = new Map();
+/*
+    !! Code Below !!
+           |
+           v
+*/
 
-const newInnovation = arr => {
-    const innovation = new Innovation(arr[0], arr[1]);
+const testNetwork = toNetwork("./Networks/Test21.json");
+let neuronLayers = [];
 
-    innovationTable.set(`${arr[0]}-${arr[1]}`, innovation);
-    innovationTable.set(innovation.id, innovation);
-}
-
-settings.startingInnovationTable.forEach(innov => newInnovation(innov));
-
-
-for(let i = 0; i < settings.population; i++) {
-    networks.push(toNetwork("./Networks/Blank21.json", innovationTable));
-}
-
-console.log(networks);
+console.table(testNetwork.run(1, 1));

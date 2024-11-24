@@ -16,6 +16,15 @@ class Innovation {
     this.to = to;
     this.id = innovationCounter++;
   }
+
+  static innovationTable = new Map();
+  
+  static newInnovation(arr) {
+    const innovation = new Innovation(arr[0], arr[1]);
+
+    Innovation.innovationTable.set(`${arr[0]}-${arr[1]}`, innovation);
+    Innovation.innovationTable.set(innovation.id, innovation);
+  }
 }
 
 module.exports = { Innovation }
