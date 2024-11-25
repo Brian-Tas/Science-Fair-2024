@@ -26,4 +26,6 @@ settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(
 const testNetwork = toNetwork("./Networks/Test21.json");
 let neuronLayers = [];
 
-console.table(testNetwork.run(1, 1));
+console.table(testNetwork.run(0, 0));
+
+console.table(mutate(testNetwork.genome));
