@@ -1,7 +1,42 @@
 // Import components
-const { Connector } = require("./Connector.js");
-const { Neuron } = require("./Neuron.js");
+let connectorCounter = 0;
 
+class Connector {
+    constructor(innovation, weight, status=true) {
+      if(typeof innovation === 'undefined') {
+        console.error("No innovation provided at new connector");
+        throw new Error("issue above");
+      }
+      if(typeof weight === 'undefined') {
+        console.error("No weight provided at new connector");
+        throw new Error("issue above");
+      }
+      this.innovation = innovation;
+      this.weight = weight;
+      this.id = innovation.id;
+      this.status = status;
+  }
+}
+
+class Neuron {
+    constructor(id, type, value=0) {
+      if(typeof id === 'undefined') {
+        console.error('No id provided for Neuron construction');
+        throw new Error("issue above");
+      }
+
+      if(typeof type === 'undefined') {
+        console.error('No type specified at Neuron construction');
+        throw new Error("issue above");
+      }
+  
+      this.id = id;
+      this.value = value;
+      this.type = type;
+      this.connectors = [];
+    }
+}
+  
 // Activation functions
 const sigmoid = n => {
   return 1 / (1 + Math.exp(-n));
@@ -193,4 +228,4 @@ class NeuralNetwork {
   }
 }
 
-module.exports = { NeuralNetwork }
+export default NeuralNetwork

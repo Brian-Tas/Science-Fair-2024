@@ -26,6 +26,23 @@ settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(
 const testNetwork = toNetwork("./Networks/Test21.json");
 let neuronLayers = [];
 
-console.table(testNetwork.run(0, 0));
+testNetwork.neurons = testNetwork.neurons.toString();
+testNetwork.neurons = testNetwork.connectors.toString();
+testNetwork.innovationTable = testNetwork.innovationTable.toString();
 
-console.table(mutate(testNetwork.genome));
+testNetwork.neurons = eval(testNetwork.neurons);
+testNetwork.connectors = eval(testNetwork.connectors);
+testNetwork.innovationTable = eval(testNetwork.innovationTable);
+
+//const jsonnet = JSON.stringify(testNetwork);
+
+/*const fs = require("fs");
+
+fs.writeFile("./networkJSON", jsonnet, 'utf-16le', function (err) {
+    if (err) {
+        console.log("An error occured while writing JSON Object to File.");
+        return console.log(err);
+    }
+
+    console.log("JSON file has been saved.");
+});*/
