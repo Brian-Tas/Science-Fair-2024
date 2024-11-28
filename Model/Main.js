@@ -14,5 +14,6 @@ models[0].circle(1, 0)*/
 document.getElementById("mainTest").innerHTML = "main working";
 
 (async () => {
-    document.getElementById("test").innerHTML = await toNetwork("ModelPop/Model1.json")
+    const network = (await toNetwork("ModelPop/Model1.json"))
+    const model = new Model(network);
 })();
