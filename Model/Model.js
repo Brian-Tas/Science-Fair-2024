@@ -32,7 +32,7 @@ class Model {
 
         for(let i = 0; i < layers.length; i++) {
             for(let j = 0; j < layers[i].length; j++) {
-                this.circle(j, i, 10, layers[i].length);
+                this.circle(j, i, 10);
             }
         }
 
@@ -44,17 +44,17 @@ class Model {
     }
     static count = 0;
 
-    modelX(index, layer, indexLength) {
-        return this.canvas.width/index/2;
+    modelX(index, layerLength) {
+        return this.canvas.width/layerLength * index
     }
 
     modelY(layer) {
         return this.canvas.height - (layer * 70 + 20);
     }
 
-    circle(index, layer, r = 10, indexLength) {
+    circle(index, layer, r = 10, layerLength) {
         this.ctx.beginPath();
-        this.ctx.arc(this.modelX(index, layer, indexLength), this.modelY(layer), r, 0, 2 * Math.PI);
+        this.ctx.arc(this.modelX(index, layerLength), this.modelY(layer), r, 0, 2 * Math.PI);
         this.ctx.stroke();
     }
 }
