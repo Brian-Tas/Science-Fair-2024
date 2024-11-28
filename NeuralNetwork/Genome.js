@@ -1,5 +1,5 @@
 class Genome {
-    constructor(neurons = [[],[],[]], weights = [], innovIds = [], order=null) {
+    constructor(neurons = [[],[],[]], weights = [], innovIds = [], order=null, layers=null) {
       if(typeof innovIds === 'undefined') {
         console.log("No innovation id's provided, using default");
       }
@@ -18,6 +18,7 @@ class Genome {
       this.weights = weights;
       this.neurons = neurons;
       this.order = order;
+      this.layers = layers;
     }
   }
   

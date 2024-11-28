@@ -228,4 +228,56 @@ class NeuralNetwork {
   }
 }
 
-export default NeuralNetwork
+let innovationCounter = 0;
+
+class Innovation {
+  constructor(from, to) {
+    //error handling
+    if(typeof from === 'undefined') {
+      console.error('No "from" input provided to new innovation');
+      throw new Error("issue above");
+    }
+    if(typeof to === 'undefined') {
+      console.error('No "to" input provided to new innovation');
+      throw new Error("issue above");
+    }
+    
+    this.from = from;
+    this.to = to;
+    this.id = innovationCounter++;
+  }
+
+  static innovationTable = new Map();
+  
+  static newInnovation(arr) {
+    const innovation = new Innovation(arr[0], arr[1]);
+
+    Innovation.innovationTable.set(`${arr[0]}-${arr[1]}`, innovation);
+    Innovation.innovationTable.set(innovation.id, innovation);
+  }
+}
+
+class Genome {
+  constructor(neurons = [[],[],[]], weights = [], innovIds = [], order=null) {
+    if(typeof innovIds === 'undefined') {
+      console.log("No innovation id's provided, using default");
+    }
+    if(typeof weights === 'undefined') {
+      console.log("No weights provided, using default");
+    }
+    if(typeof neurons === 'undefined') {
+      console.log("No neurons provided, using default");
+    }
+    if(weights.length !== innovIds.length) {
+      console.error(`Innovation Id's aren't matched to innovation weights at Genome. Innovations: "${innovIds}" weights: ${weights}`);
+      throw new Error("issue above");
+    }
+
+    this.ids = innovIds;
+    this.weights = weights;
+    this.neurons = neurons;
+    this.order = order;
+  }
+}
+
+export { NeuralNetwork, Genome, Innovation }
