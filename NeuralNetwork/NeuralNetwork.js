@@ -47,9 +47,11 @@ class NeuralNetwork {
     this.neurons = new Map();
 
     this.neurons.set(0, new Neuron(0, typeMap[3]));
+    let neuronCount = 0;
 
     for(let j = 0; j < this.genome.neurons.length; j++) {
       for(let i = 0; i < this.genome.neurons[j].length; i++) {
+        neuronCount++;
 
         const neuronId = this.genome.neurons[j][i];
 
@@ -63,6 +65,8 @@ class NeuralNetwork {
 
       this.neurons.set(typeMap[j], this.genome.neurons[j]);
     }
+
+    this.neurons.set("length", neuronCount);
 
     // Construct connectors and assign nodes a "to" value
     this.connectors = new Map();
@@ -123,9 +127,92 @@ class NeuralNetwork {
 
         this.order.unshift(connectorsId);
       } 
+
+      this.genome.order = this.order
     }
 
-    this.genome.order = this.order
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Get layers
+    this.layers = this.genome.layers
+
+    if(this.layers === null) {
+      let currentNeuronLevel = this.neurons.get("outputs");
+      let layers = new Map();
+
+      console.log(this.neurons.get("length"))
+      
+      for(let j = 0; j < this.neurons.get("length"); j++)
+      {
+        for(let i = 0; i < currentNeuronLevel.length; i++)
+        {
+          let temp = [];
+  
+  
+        }
+      }
+      
+
+
+      this.genome.layers = this.layers
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Sets bias node
     this.neurons.get(0).value = 1;

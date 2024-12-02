@@ -1,6 +1,6 @@
 const settings = require("../Storage/Settings.json");
 
-const mutate = (genome, innovationTable) => { 
+const mutate = (network) => { 
     
 }
 
