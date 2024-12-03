@@ -1,6 +1,7 @@
 // Import components
 const { Connector } = require("./Connector.js");
 const { Neuron } = require("./Neuron.js");
+const { Path } = require("./Path.js");
 
 // Activation functions
 const sigmoid = n => {
@@ -161,23 +162,49 @@ class NeuralNetwork {
     this.layers = this.genome.layers
 
     if(this.layers === null) {
-      let currentNeuronLevel = this.neurons.get("outputs");
+
+      // Makes an array of all output and hidden nodes to be tested. Sensors excepted
+      let neurons = [...this.neurons.get("outputs"), ...this.neurons.get("hiddens")];
+
+      // Temporary map to store all the neurons and their distances
       let layers = new Map();
 
-      console.log(this.neurons.get("length"))
+      // Sensors are all assigned a distance of 0 away from themselves
+      this.neurons.get("sensors").forEach(neuron => {
+        layers.set(0, neuron);
+      });
+
       
-      for(let j = 0; j < this.neurons.get("length"); j++)
+      // Path testing
+      const path = new Path([1, 2, 3, 4, 5]);
+      console.log(path.getLength());
+
+      /*
+        !! Code Below !!
+               |
+               v
+      */
+
+      // Iterate through all yet to be run neurons
+      for(let i = 0; i < neurons.length; i++) 
       {
-        for(let i = 0; i < currentNeuronLevel.length; i++)
-        {
-          let temp = [];
-  
-  
-        }
+        let queue = [];
+        let paths = [];
+
+        let tempConnectorArray = [];
+
+        tempConnectorArray = this.neurons.get(neurons[i]).connectors;
+
+        tempConnectorArray.forEach(connector => {
+          queue.push(this.connectors.get(connector).innovation.from);
+        });
+
+        console.log(queue);
       }
-      
 
 
+
+      // Syncs genome.layers and network.layers since genome.layers has to be null for this line to run
       this.genome.layers = this.layers
     }
 
