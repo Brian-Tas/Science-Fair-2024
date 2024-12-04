@@ -1,24 +1,42 @@
 const { createCanvas } = require('@napi-rs/canvas');
 const fs = require('fs');
 
-// Create a canvas of 400x400 pixels
-const canvas = createCanvas(400, 400);
+// Create a smaller canvas of 200x200 pixels (reduced resolution)
+const canvas = createCanvas(20, 20); // Reduced canvas size
 const ctx = canvas.getContext('2d');
-
-// Set background color
-ctx.fillStyle = '#ffffff'; // White
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 // Set the fill color for the shape (a circle)
 ctx.fillStyle = '#3498db'; // Blue
 ctx.beginPath();
-ctx.arc(200, 200, 100, 0, Math.PI * 2); // Draw a circle at (200, 200) with a radius of 100
+ctx.arc(10, 10, 10, 0, Math.PI * 2); // Draw a smaller circle at (100, 100) with a smaller radius
 ctx.fill();
 
-// Export the canvas to a PNG file
-const buffer = canvas.toBuffer('image/png'); // Generate a PNG buffer
 
-// Write the PNG buffer to a file
-fs.writeFileSync('output.png', buffer);
 
-console.log('The PNG file was created.');
+
+
+
+/*
+    !! RENDERING !!
+     |           |
+     |           |
+     V           V
+*/
+
+
+
+const buffer = canvas.toBuffer('image/png');
+fs.writeFileSync('outputs/output.png', buffer);
+
+console.log('The low-quality PNG file was created.');
+
+
+var pngStringify = require('console-png');
+const { verify } = require('crypto');
+ 
+var image = require('fs').readFileSync(__dirname + '/outputs/output.png');
+ 
+pngStringify(image, function (err, string) {
+  if (err) throw err;
+  console.log(string);
+})
