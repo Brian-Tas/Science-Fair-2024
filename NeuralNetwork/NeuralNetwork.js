@@ -1,4 +1,5 @@
 // Import components
+const { Model } = require("../Render/Model.js");
 const { Connector } = require("./Connector.js");
 const { Neuron } = require("./Neuron.js");
 const { Path } = require("./Path.js");
@@ -21,6 +22,7 @@ class NeuralNetwork {
     this.innovationTable = innovationTable;
     this.genome = genome;
     this.activationFunctions = activationFunctions;
+    this.id = NeuralNetwork.id++;
 
     if(typeof this.genome !== 'object') {
       console.error(`Please pass through a valid genome. Genome should be an object. Genome passed through: ${this.genome}`);
@@ -250,6 +252,7 @@ class NeuralNetwork {
     ["tanh", tanh],
     ["sigmoid", sigmoid]
   ]);
+  static id = 0;
   fireConnector(id) {
     if(typeof id !== 'number') {
       console.error(`Id is not a number at FireConnector(). Id: ${id}`);
@@ -304,6 +307,13 @@ class NeuralNetwork {
     }
 
     return outputs;
+  }
+  render() {
+    if(!this.model) {
+      this.model = new Model(this.network, `/outputs/${this.id}.png`);
+    }
+
+    this.model.render();
   }
 }
 
