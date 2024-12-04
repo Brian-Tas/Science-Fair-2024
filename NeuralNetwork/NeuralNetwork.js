@@ -161,7 +161,7 @@ class NeuralNetwork {
 
 
     // Get layers
-    this.layers = this.genome.layers
+    this.layers = [[1, 2], [3], [4]]
 
     if(this.layers === null) {
 
@@ -310,9 +310,11 @@ class NeuralNetwork {
   }
   render() {
     if(!this.model) {
-      this.model = new Model(this.network, `/outputs/${this.id}.png`);
+      this.model = new Model(this, `/outputs/${this.id}.png`);
     }
 
+    this.model.model();
+    this.model.PNGify();
     this.model.render();
   }
 }
