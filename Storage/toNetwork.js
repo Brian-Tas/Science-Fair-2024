@@ -12,7 +12,9 @@ const toNetwork = (path) => {
     const genome = new Genome(
         JSONnetwork.neurons, 
         JSONnetwork.weights, 
-        JSONnetwork.ids
+        JSONnetwork.ids,
+        JSONnetwork.order,
+        JSONnetwork.layers
     );
 
     return new NeuralNetwork(genome, Innovation.innovationTable);

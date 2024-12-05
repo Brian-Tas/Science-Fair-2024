@@ -4,7 +4,7 @@ const fs = require('fs');
 class Model {
   constructor(network, path) {
     // Create the canvas variables
-    this.scale = 3;
+    this.scale = 1;
     
     this.path = path;
     this.network = network;
