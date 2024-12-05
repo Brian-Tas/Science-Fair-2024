@@ -165,7 +165,7 @@ class NeuralNetwork {
 
     if(this.layers === null) {
 
-      // Makes an array of all output and hidden nodes to be tested. Sensors excepted
+      // Makes an array of all output and hidden nodes to be tested. Sensors + Bias excluded
       let neurons = [...this.neurons.get("outputs"), ...this.neurons.get("hiddens")];
 
       // Temporary map to store all the neurons and their distances
@@ -178,10 +178,11 @@ class NeuralNetwork {
 
       layers.set(0, this.neurons.get(0));
 
+      const terminators = [0, ...this.neurons.get("sensors")]
+
       
       // Path testing
       const path = new Path([1, 2, 3, 4, 5]);
-      console.log(path.getLength());
 
       /*
         !! Code Below !!
@@ -192,21 +193,45 @@ class NeuralNetwork {
       // Iterate through all yet to be run neurons
       for(let i = 0; i < neurons.length; i++) 
       {
+        let steps = 0;
+
         let queue = [];
         let paths = [];
 
         let tempConnectorArray = [];
-
         tempConnectorArray = this.neurons.get(neurons[i]).connectors;
 
-        tempConnectorArray.forEach(connector => {
-          queue.push(this.connectors.get(connector).innovation.from);
-        });
+        for(let h = 0; h < this.connectors.size; h++) {
+  
+  
+          tempConnectorArray.forEach(connector => {
+            queue.push(this.connectors.get(connector).innovation.from);
+          });
+  
+          // Filter out terminators
+  
+          for(let j = 0; j < terminators.length; j++) {
+            const index = queue.indexOf(terminators[j]);
+  
+            if(index === -1) {
+              break;
+            }
+  
+            queue.splice(index, 1);
+          }
 
-        console.log(queue);
+          if(queue.length === 0) {
+            break;
+          }
+  
+          console.log(queue);
+        }
+
+        
+
       }
 
-
+      // Sets this.layers to the layer map
 
       // Syncs genome.layers and network.layers since genome.layers has to be null for this line to run
       this.genome.layers = this.layers
