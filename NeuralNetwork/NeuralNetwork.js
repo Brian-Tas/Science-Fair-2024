@@ -50,7 +50,7 @@ class NeuralNetwork {
     this.neurons = new Map();
 
     this.neurons.set(0, new Neuron(0, typeMap[3]));
-    let neuronCount = 0;
+    let neuronCount = 1;
 
     for(let j = 0; j < this.genome.neurons.length; j++) {
       for(let i = 0; i < this.genome.neurons[j].length; i++) {
@@ -161,7 +161,7 @@ class NeuralNetwork {
 
 
     // Get layers
-    this.layers = [[1, 2], [3], [4]]
+    this.layers = this.genome.layers;
 
     if(this.layers === null) {
 
@@ -175,6 +175,8 @@ class NeuralNetwork {
       this.neurons.get("sensors").forEach(neuron => {
         layers.set(0, neuron);
       });
+
+      layers.set(0, this.neurons.get(0));
 
       
       // Path testing
