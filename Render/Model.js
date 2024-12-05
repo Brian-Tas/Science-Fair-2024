@@ -27,8 +27,6 @@ class Model {
       throw new Error(`network doesnt have id????. it might not be a network. id: "${network.id}"`);
     }
 
-    console.log([this.width, this.height])
-
 
   }
 
