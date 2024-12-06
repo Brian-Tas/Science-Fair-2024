@@ -193,16 +193,7 @@ class NeuralNetwork {
      for(let h = 0; h < neurons.length; h++) {
         let paths = [];
         let queue = this.getQueue(neurons[h]);
-
-        for(let j = 0; j < terminators.length; j++) {
-          const index = queue.indexOf(terminators[j]);
-
-          if(index === -1) {
-            break;
-          }
-
-          queue.splice(index, 1);
-        }
+        queue = terminateQueue(queue, terminators);
 
         for(let j = 0; j < this.connectors.size; j++) {
           for(let i = 0; i < queue.length; i++) {
@@ -340,6 +331,21 @@ class NeuralNetwork {
   }
 }
 
+const terminateQueue = (queue, terminators) => {
+  const terminatedQueue = queue;
+
+  for(let j = 0; j < terminators.length; j++) {
+    const index = terminatedQueue.indexOf(terminators[j]);
+
+    if(index === -1) {
+      break;
+    }
+
+    terminatedQueue.splice(index, 1);
+  }
+
+  return terminatedQueue;
+}
 
 
 module.exports = { NeuralNetwork }
