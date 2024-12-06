@@ -190,50 +190,30 @@ class NeuralNetwork {
                v
       */
 
-      // Iterate through all yet to be run neurons
-      for(let i = 0; i < neurons.length; i++) 
-      {
-        let steps = 0;
-
-        let queue = [];
+     for(let h = 0; h < neurons.length; h++) {
         let paths = [];
+        let queue = this.getQueue(neurons[h]);
 
-        let tempConnectorArray = [];
-        tempConnectorArray = this.neurons.get(neurons[i]).connectors;
+        for(let j = 0; j < terminators.length; j++) {
+          const index = queue.indexOf(terminators[j]);
 
-        for(let h = 0; h < this.connectors.size; h++) {
-  
-  
-          tempConnectorArray.forEach(connector => {
-            queue.push(this.connectors.get(connector).innovation.from);
-          });
-  
-          // Filter out terminators
-  
-          for(let j = 0; j < terminators.length; j++) {
-            const index = queue.indexOf(terminators[j]);
-  
-            if(index === -1) {
-              break;
-            }
-  
-            queue.splice(index, 1);
-          }
-
-          if(queue.length === 0) {
+          if(index === -1) {
             break;
           }
-  
-          console.log(queue);
+
+          queue.splice(index, 1);
         }
 
-        
+        for(let j = 0; j < this.connectors.size; j++) {
+          for(let i = 0; i < queue.length; i++) {
+            paths.push(new Path([]));
+  
+          }
+        }
 
+        console.table(paths)
       }
 
-      // Sets this.layers to the layer map
-
-      // Syncs genome.layers and network.layers since genome.layers has to be null for this line to run
       this.genome.layers = this.layers
     }
 
@@ -344,6 +324,22 @@ class NeuralNetwork {
     this.model.PNGify();
     this.model.render();
   }
+  getQueue(neuron) {
+    let queue = [];
+
+    // Get connectors
+    let connectors = this.neurons.get(neuron).connectors;
+
+    connectors.forEach(connector => {
+      queue.push(
+        this.connectors.get(connector).innovation.from
+      );
+    });
+
+    return queue;
+  }
 }
+
+
 
 module.exports = { NeuralNetwork }
