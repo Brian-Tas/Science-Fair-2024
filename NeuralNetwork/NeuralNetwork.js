@@ -91,13 +91,14 @@ class NeuralNetwork {
     this.order = this.genome.order;
     
     if(this.order === null) {
-      debugger;
       this.order = [];
-
+      
       let currentNeuronLevel = this.neurons.get("outputs");
+      const terminators = [0, ...this.neurons.get("sensors")];
 
       for(let h = 0; h < this.connectors.size; h++) {
         let connectors = [];
+        currentNeuronLevel = terminateQueue(currentNeuronLevel, terminators);
 
         // Iterates through currentNeuronLevel
         for(let i = 0; i < currentNeuronLevel.length; i++) {
@@ -116,6 +117,7 @@ class NeuralNetwork {
           connectorsId.push(connectors[i].id);
         }
 
+        terminators.push(...currentNeuronLevel);
         currentNeuronLevel = [];
 
         for(let i = 0; i < connectors.length; i++) {
@@ -128,7 +130,7 @@ class NeuralNetwork {
         if(currentNeuronLevel.length === 0) {
           break;
         }
-
+        debugger;
         this.order.unshift(connectorsId);
       } 
 
@@ -196,11 +198,6 @@ class NeuralNetwork {
         let queue = this.getQueue(neurons[h]);
         queue = terminateQueue(queue, terminators);
 
-        console.log(queue);
-
-        for(let i = 0; i < queue.length; i++) {
-          
-        }
       }
 
       this.genome.layers = this.layers
@@ -335,11 +332,10 @@ const terminateQueue = (queue, terminators) => {
   for(let j = 0; j < terminators.length; j++) {
     const index = terminatedQueue.indexOf(terminators[j]);
 
-    if(index === -1) {
-      break;
+    if(index !== -1) {
+      terminatedQueue.splice(index, 1);
     }
 
-    terminatedQueue.splice(index, 1);
   }
 
   return terminatedQueue;
