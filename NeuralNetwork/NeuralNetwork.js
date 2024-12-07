@@ -91,6 +91,7 @@ class NeuralNetwork {
     this.order = this.genome.order;
     
     if(this.order === null) {
+      debugger;
       this.order = [];
 
       let currentNeuronLevel = this.neurons.get("outputs");
@@ -195,14 +196,11 @@ class NeuralNetwork {
         let queue = this.getQueue(neurons[h]);
         queue = terminateQueue(queue, terminators);
 
-        for(let j = 0; j < this.connectors.size; j++) {
-          for(let i = 0; i < queue.length; i++) {
-            paths.push(new Path([]));
-  
-          }
-        }
+        console.log(queue);
 
-        console.table(paths)
+        for(let i = 0; i < queue.length; i++) {
+          
+        }
       }
 
       this.genome.layers = this.layers
