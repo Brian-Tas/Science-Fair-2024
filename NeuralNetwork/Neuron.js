@@ -13,7 +13,8 @@ class Neuron {
       this.id = id;
       this.value = value;
       this.type = type;
-      this.connectors = [];
+      this.from = [];
+      this.to = [];
     }
   }
   

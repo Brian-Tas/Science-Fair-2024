@@ -78,26 +78,48 @@ class NeuralNetwork {
       const newConnector = new Connector(this.innovations[i], this.genome.weights[i], true);
       this.connectors.set(newConnector.id, newConnector);
 
-      /*
-          [] <- Neuron
-          ||
-          [] <- Connector
-      */
-
-      this.neurons.get(newConnector.innovation.from).connectors.push(newConnector.id);
+      this.neurons.get(newConnector.innovation.from).from.push(newConnector.id);
+      this.neurons.get(newConnector.innovation.to  ).to  .push(newConnector.id);
     }
 
     // Construct feed-forward 
     this.order = this.genome.order;
     
     if(this.order === null) {
-        this.order = [];
+      this.order = [];
 
-        let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
-        console.log(currentNeuronLevel);
+      let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
+      console.log(currentNeuronLevel);
+
+      const ready = [];
+
+      for(let i = 0; i < this.connectors.size; i++) {
+        /*
+            .from =
+            []
+            || <- value
+            [] <- neuron
+
+            .to =
+            [] <- neuron
+            || <- value
+            [] 
+
+        */
+
+        let connectors = Array.from(currentNeuronLevel, x => this.neurons.get(x).from).flat();
+  
+        this.order.push(currentNeuronLevel);
+  
+        currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).innovation.to);
+
+        if(currentNeuronLevel.length === 0) {
+          break;
+        }
+      }
     } 
 
-      this.genome.order = this.order
+    this.genome.order = this.order
   
     // Sets bias node
     this.neurons.get(0).value = 1;
@@ -172,20 +194,6 @@ class NeuralNetwork {
     this.model.model();
     this.model.PNGify();
     this.model.render();
-  }
-  getQueue(neuron) {
-    let queue = [];
-
-    // Get connectors
-    let connectors = this.neurons.get(neuron).connectors;
-
-    connectors.forEach(connector => {
-      queue.push(
-        this.connectors.get(connector).innovation.from
-      );
-    });
-
-    return queue;
   }
 }
 

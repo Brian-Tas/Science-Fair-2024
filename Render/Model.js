@@ -49,11 +49,14 @@ class Model {
 
     let neurons = new Map();
     let neuronPostions = []
+    let lanes = new Map();
 
     for(let i = 0; i < this.network.layers.length; i++) {
       for(let j = 0; j < this.network.layers[i].length; j++) {
         const lane = this.getLane();
         neuronPostions.push([this.getX(i), this.getY(lane), 3, this.ctx]);
+
+        lanes.set(lane, this.network.layers[i][j]);
 
         neurons.set(this.network.layers[i][j], [this.getX(i) + 1, this.getY(lane) + 1]);
       }
