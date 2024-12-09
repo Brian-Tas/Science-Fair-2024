@@ -25,5 +25,6 @@ settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(
 
 const testNetwork = toNetwork("./Networks/Test21.json");
 
-console.table(testNetwork.order)
-console.log(testNetwork.run(1, 0));
+testNetwork.run(1, 0);
+
+testNetwork.render();
