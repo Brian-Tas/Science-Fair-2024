@@ -91,7 +91,7 @@ class NeuralNetwork {
       let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
       console.log(currentNeuronLevel);
 
-      const fired = [];
+      let fired = [];
 
       for(let i = 0; i < this.connectors.size; i++) {
         /*
