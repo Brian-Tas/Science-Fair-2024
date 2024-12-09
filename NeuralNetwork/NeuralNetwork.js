@@ -84,158 +84,21 @@ class NeuralNetwork {
           [] <- Connector
       */
 
-      this.neurons.get(newConnector.innovation.to).connectors.push(newConnector.id);
+      this.neurons.get(newConnector.innovation.from).connectors.push(newConnector.id);
     }
 
     // Construct feed-forward 
     this.order = this.genome.order;
     
     if(this.order === null) {
-      this.order = [];
-      
-      let currentNeuronLevel = this.neurons.get("outputs");
-      const terminators = [0, ...this.neurons.get("sensors")];
+        this.order = [];
 
-      for(let h = 0; h < this.connectors.size; h++) {
-        let connectors = [];
-        currentNeuronLevel = terminateQueue(currentNeuronLevel, terminators);
-
-        // Iterates through currentNeuronLevel
-        for(let i = 0; i < currentNeuronLevel.length; i++) {
-          const currentNeuron = this.neurons.get(currentNeuronLevel[i]);
-          
-          // Iterates through all connections for a given neuron and adds them to connectors
-          for(let j = 0; j < currentNeuron.connectors.length; j++) {
-            connectors.push(this.connectors.get(currentNeuron.connectors[j]));
-          }
-        }
-
-        connectors = [...new Set(connectors)];
-        let connectorsId = [];
-
-        for(let i = 0; i < connectors.length; i++) {
-          connectorsId.push(connectors[i].id);
-        }
-
-        terminators.push(...currentNeuronLevel);
-        currentNeuronLevel = [];
-
-        for(let i = 0; i < connectors.length; i++) {
-          currentNeuronLevel.push(
-            connectors[i].innovation.from
-          );
-        }
-
-        // Checks if there are no more neurons to be ran
-        if(currentNeuronLevel.length === 0) {
-          break;
-        }
-        debugger;
-        this.order.unshift(connectorsId);
-      } 
+        let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
+        console.log(currentNeuronLevel);
+    } 
 
       this.genome.order = this.order
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Get layers
-    this.layers = this.genome.layers;
-
-    if(this.layers === null) {
-
-      // Makes an array of all output and hidden nodes to be tested. Sensors + Bias excluded
-      let neurons = [...this.neurons.get("outputs"), ...this.neurons.get("hiddens")];
-
-      // Temporary map to store all the neurons and their distances
-      let layers = new Map();
-
-      // Sensors are all assigned a distance of 0 away from themselves
-      this.neurons.get("sensors").forEach(neuron => {
-        layers.set(0, neuron);
-      });
-
-      layers.set(0, this.neurons.get(0));
-
-      const terminators = [0, ...this.neurons.get("sensors")]
-
-      
-      // Path testing
-      const path = new Path([1, 2, 3, 4, 5]);
-
-      /*
-        !! Code Below !!
-               |
-               v
-      */
-
-     for(let h = 0; h < neurons.length; h++) {
-        let paths = [];
-        let queue = this.getQueue(neurons[h]);
-        queue = terminateQueue(queue, terminators);
-
-      }
-
-      this.genome.layers = this.layers
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
     // Sets bias node
     this.neurons.get(0).value = 1;
     
