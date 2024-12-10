@@ -83,10 +83,10 @@ class NeuralNetwork {
     }
 
     // Construct feed-forward 
-    this.order = this.genome.order;
+    this.layers = this.genome.layers;
     
-    if(this.order === null) {
-      this.order = [];
+    if(this.layers === null) {
+      this.layers = [];
 
       let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
 
@@ -113,7 +113,7 @@ class NeuralNetwork {
         fired = fired.flat();
         fired = [...new Set(fired)];
   
-        this.order.push(currentNeuronLevel);
+        this.layers.push(currentNeuronLevel);
   
         currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).innovation.to);
         currentNeuronLevel = [...new Set(currentNeuronLevel)];
@@ -139,13 +139,36 @@ class NeuralNetwork {
         if(currentNeuronLevel.length === 0) {
           break;
         }
-
-        console.table(currentNeuronLevel);
       }
     } 
 
-    this.genome.order = this.order
-  
+    this.genome.layers = this.layers
+
+    this.order = this.genome.order;
+    
+    if(this.order === null) {
+      this.order = [];
+
+      for(let i = 0; i < this.layers.length - 1; i++) {
+        let connectorLayer = [];
+
+        for(let j = 0; j < this.layers[i].length; j++) {
+          connectorLayer.push(
+            this.neurons.get(
+              this.layers[i][j]
+            ).from
+          );
+
+        }
+        
+        connectorLayer = connectorLayer.flat();
+        this.order.push(connectorLayer);
+      }
+    }
+
+    console.table(this.order)
+
+
     // Sets bias node
     this.neurons.get(0).value = 1;
     
