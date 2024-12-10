@@ -118,8 +118,6 @@ class NeuralNetwork {
         currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).innovation.to);
         currentNeuronLevel = [...new Set(currentNeuronLevel)];
 
-        debugger;
-
         let marked = [];
 
         for(let i = 0; i < currentNeuronLevel.length; i++) {
@@ -132,7 +130,6 @@ class NeuralNetwork {
           });
         }
 
-        debugger;
         marked = [...new Set(marked)];
 
         marked.forEach(mark => {
