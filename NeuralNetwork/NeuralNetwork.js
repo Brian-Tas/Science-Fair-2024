@@ -89,11 +89,10 @@ class NeuralNetwork {
       this.order = [];
 
       let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
-      console.log(currentNeuronLevel);
 
       let fired = [];
 
-      for(let i = 0; i < this.connectors.size; i++) {
+      for(let j = 0; j < this.connectors.size; j++) {
         /*
             .from =
             []
@@ -112,16 +111,39 @@ class NeuralNetwork {
         fired.push(connectors);
 
         fired = fired.flat();
+        fired = [...new Set(fired)];
   
         this.order.push(currentNeuronLevel);
   
         currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).innovation.to);
+        currentNeuronLevel = [...new Set(currentNeuronLevel)];
 
-        currentNeuronLevel
+        debugger;
+
+        let marked = [];
+
+        for(let i = 0; i < currentNeuronLevel.length; i++) {
+          const neuronConnectors = this.neurons.get(currentNeuronLevel[i]).to;
+
+          neuronConnectors.forEach(connector => {
+            if(!fired.includes(connector)) {
+              marked.push(currentNeuronLevel[i]);
+            }
+          });
+        }
+
+        debugger;
+        marked = [...new Set(marked)];
+
+        marked.forEach(mark => {
+          currentNeuronLevel.splice(currentNeuronLevel.indexOf(mark), 1);
+        });
 
         if(currentNeuronLevel.length === 0) {
           break;
         }
+
+        console.table(currentNeuronLevel);
       }
     } 
 
