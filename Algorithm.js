@@ -1,30 +1,12 @@
-// Import settings- i.e. chances/population/other
+const { Innovation } = require("./NeuralNetwork/Innovation");
 const settings = require("./Storage/Settings.json");
 
-// Import operations- i.e. crossover/mutation
-const { mutate } = require("./Operations/Mutate");
-
-//const { crossover } = require("./Operations/Crossover");
-
-// Import network creator to make networks
-const { toNetwork } = require("./Storage/toNetwork");
-
-// Import logic gates + testing
-const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
-
-// Import innovation
-const { Innovation } = require("./NeuralNetwork/Innovation");
-
-settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
+const { Population } = require("./Population");
 
 /*
-    !! Code Below !!
-           |
-           v
+    Valid gates:
+    xor, xor3, and, swap
+
 */
 
-const testNetwork = toNetwork("./Networks/Blank21.json");
-
-debugger;
-console.table(testNetwork.run(1, 1));
-console.table([testNetwork.order, testNetwork.layers])
+const population = new Population("./Networks/Blank21.json", 10, 'xor');

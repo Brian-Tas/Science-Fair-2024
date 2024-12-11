@@ -17,13 +17,13 @@ class Innovation {
     this.id = innovationCounter++;
   }
 
-  static innovationTable = new Map();
+  static table = new Map();
   
   static newInnovation(arr) {
     const innovation = new Innovation(arr[0], arr[1]);
 
-    Innovation.innovationTable.set(`${arr[0]}-${arr[1]}`, innovation);
-    Innovation.innovationTable.set(innovation.id, innovation);
+    Innovation.table.set(`${arr[0]}-${arr[1]}`, innovation);
+    Innovation.table.set(innovation.id, innovation);
   }
 }
 
