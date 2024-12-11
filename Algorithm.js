@@ -10,3 +10,5 @@ const { Population } = require("./Population");
 */
 
 const population = new Population("./Networks/Blank21.json", 10, 'xor');
+
+console.table(population.getAnswers());

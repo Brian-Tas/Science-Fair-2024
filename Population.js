@@ -5,6 +5,7 @@ const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 
 // Import innovation
 const { Innovation } = require("./NeuralNetwork/Innovation");
+const { Genome } = require("./NeuralNetwork/Genome");
 const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
 
 settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
@@ -14,7 +15,8 @@ class Population {
     constructor(path, size, gate) {
         this.path = path;
         this.size = size;
-        this.gate = Population.gates.get(gate);;
+        this.gate = Population.gates.get(gate);
+        this.defaultGenome = require("./Storage/Networks/Blank21.json");
 
         // Error handling in the case args arent the correct datatype
         if(typeof this.path !== 'string') {
@@ -32,8 +34,23 @@ class Population {
         this.genomes = []; // Array of genome *objects*
 
         // Fill this.genomes with the default blank
+        let g = this.defaultGenome;
         for(let i = 0; i < size; i++) {
-            this.genomes.push();
+            this.genomes.push(new Genome(g.neurons, g.weights, g.ids));
+        }
+    }
+
+    getAnswers() {
+        let networks = [];
+
+        for(let i = 0; i < this.genomes.length; i++) {
+            networks.push(
+                new NeuralNetwork(this.genomes[i], Innovation.table)
+            );
+        }
+
+        for(let i = 0; i < networks.length; i++) {
+            console.table(getAnswers(networks[i], this.gate));
         }
     }
 

@@ -122,7 +122,6 @@ class NeuralNetwork {
 
         for(let i = 0; i < currentNeuronLevel.length; i++) {
           const neuronConnectors = this.neurons.get(currentNeuronLevel[i]).to;
-          debugger;
 
           neuronConnectors.forEach(connector => {
             if(!fired.includes(connector)) {
@@ -152,7 +151,7 @@ class NeuralNetwork {
 
       for(let i = 0; i < this.layers.length - 1; i++) {
         let connectorLayer = [];
-        debugger;
+
         for(let j = 0; j < this.layers[i].length; j++) {
           connectorLayer.push(
             this.neurons.get(
@@ -199,12 +198,14 @@ class NeuralNetwork {
         throw new Error("issue above");
       }
 
-      debugger;
-
       toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
     }
   }
   run(...args) {
+    for(let i = 1; i < this.neurons.get("length"); i++) {
+      this.neurons.get(i).value = 0;
+    }
+
     if(args.length !== this.neurons.get("sensors").length) {
       console.error(`NN arguments are different to sensor neurons. Inputs: "${args}" Sensors: ${this.neurons.get("sensors").length}`);
       throw new Error("issue above");
@@ -225,6 +226,8 @@ class NeuralNetwork {
     }
 
     const outputs = [];
+
+    debugger;
 
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
       outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value)/2 + 0.5);
