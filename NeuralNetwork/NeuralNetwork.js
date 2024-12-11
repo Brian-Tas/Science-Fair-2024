@@ -92,7 +92,7 @@ class NeuralNetwork {
 
       let fired = [];
 
-      for(let j = 0; j < this.connectors.size; j++) {
+      for(let k = 0; k < this.neurons.get("length"); k++) {
         /*
             .from =
             []
@@ -122,6 +122,7 @@ class NeuralNetwork {
 
         for(let i = 0; i < currentNeuronLevel.length; i++) {
           const neuronConnectors = this.neurons.get(currentNeuronLevel[i]).to;
+          debugger;
 
           neuronConnectors.forEach(connector => {
             if(!fired.includes(connector)) {
@@ -151,24 +152,19 @@ class NeuralNetwork {
 
       for(let i = 0; i < this.layers.length - 1; i++) {
         let connectorLayer = [];
-
+        debugger;
         for(let j = 0; j < this.layers[i].length; j++) {
           connectorLayer.push(
             this.neurons.get(
               this.layers[i][j]
             ).from
           );
-
         }
         
         connectorLayer = connectorLayer.flat();
         this.order.push(connectorLayer);
       }
     }
-
-    console.table(this.order)
-
-
     // Sets bias node
     this.neurons.get(0).value = 1;
     
@@ -202,6 +198,8 @@ class NeuralNetwork {
         console.error(`No neuron with id of either "${fromNeuronId}" or "${toNeuronId}"`);
         throw new Error("issue above");
       }
+
+      debugger;
 
       toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
     }

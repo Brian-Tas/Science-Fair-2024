@@ -23,7 +23,8 @@ settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(
            v
 */
 
-const testNetwork = toNetwork("./Networks/Test21.json");
+const testNetwork = toNetwork("./Networks/Blank21.json");
 
-console.log(testNetwork.run(1, 0));
-console.table(testNetwork.order);
+debugger;
+console.table(testNetwork.run(1, 1));
+console.table([testNetwork.order, testNetwork.layers])
