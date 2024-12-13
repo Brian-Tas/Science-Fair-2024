@@ -1,6 +1,4 @@
 const settings = require("./Storage/Settings.json");
-const { mutate } = require("./Operations/Mutate");
-const { toNetwork } = require("./Storage/toNetwork");
 const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 
 // Import innovation
@@ -13,13 +11,12 @@ settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(
 
 class Population {
     constructor(path, size, gate) {
-        this.path = path;
         this.size = size;
         this.gate = Population.gates.get(gate);
-        this.defaultGenome = require("./Storage/Networks/Blank21.json");
+        this.defaultGenome = require(`./Storage/Networks/${path}.json`);
 
         // Error handling in the case args arent the correct datatype
-        if(typeof this.path !== 'string') {
+        if(typeof path !== 'string') {
             throw new Error(`Path is not a string. Path: ${path} Type: ${typeof path}`)
         }
 
@@ -38,19 +35,22 @@ class Population {
         for(let i = 0; i < size; i++) {
             this.genomes.push(new Genome(g.neurons, g.weights, g.ids));
         }
+
+        this.networks = []; // Is updated with .network() from the genome array
+        this.network();
     }
 
     getAnswers() {
-        let networks = [];
+        for(let i = 0; i < networks.length; i++) {
+            console.table(getAnswers(this.networks[i], this.gate));
+        }
+    }
 
+    network() {
         for(let i = 0; i < this.genomes.length; i++) {
-            networks.push(
+            this.networks.push(
                 new NeuralNetwork(this.genomes[i], Innovation.table)
             );
-        }
-
-        for(let i = 0; i < networks.length; i++) {
-            console.table(getAnswers(networks[i], this.gate));
         }
     }
 

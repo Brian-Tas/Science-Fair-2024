@@ -2,7 +2,7 @@
 const { Model } = require("../Render/Model.js");
 const { Connector } = require("./Connector.js");
 const { Neuron } = require("./Neuron.js");
-const { Path } = require("./Path.js");
+const settings = require("../Storage/Settings.json");
 
 // Activation functions
 const sigmoid = n => {
@@ -227,8 +227,6 @@ class NeuralNetwork {
 
     const outputs = [];
 
-    debugger;
-
     for(let i = 0; i < this.neurons.get("outputs").length; i++) {
       outputs.push(NeuralNetwork.activationFunctionMap.get(this.activationFunctions[1])(this.neurons.get(this.neurons.get("outputs")[i]).value)/2 + 0.5);
     }
@@ -236,29 +234,37 @@ class NeuralNetwork {
     return outputs;
   }
   render() {
-    if(!this.model) {
-      this.model = new Model(this, `/outputs/${this.id}.png`);
-    }
+    this.model = new Model(this, `/outputs/${this.id}.png`);
 
     this.model.model();
     this.model.PNGify();
     this.model.render();
   }
-}
+  mutate(maxWeightAffect, newNeuronChance, newConnectorChance, newWeightChance, newMutation) {
+    const weightAffect = maxWeightAffect || settings.mutation.maxWeightAffect;
 
-const terminateQueue = (queue, terminators) => {
-  const terminatedQueue = queue;
+    const odds = {
+      newNeuron: newNeuronChance || settings.mutation.odds.newNeuron,
+      newConnection: newConnectorChance || settings.mutation.odds.newConnection,
+      weightChange: newWeightChance || settings.mutation.odds.weightChange,
+      mutation: newMutation || settings.mutation.odds.mutation
+    };
 
-  for(let j = 0; j < terminators.length; j++) {
-    const index = terminatedQueue.indexOf(terminators[j]);
+    // Get all valid new connections
+    let connections = [];
 
-    if(index !== -1) {
-      terminatedQueue.splice(index, 1);
+    for(let i = 0; i < this.layers.length; i++) {
+      for(let j = 0; j < this.layers[i].length; j++) {
+        for(let h = i + 1; h < this.layers.length; h++) {
+          for(let q = 0; q < this.layers[h].length; q++) {
+            connections.push([this.layers[i][j], this.layers[h][q]]);
+          }
+        }  
+      }
     }
 
+    console.log(connections);
   }
-
-  return terminatedQueue;
 }
 
 

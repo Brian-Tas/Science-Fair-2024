@@ -1,10 +1,12 @@
 const { createCanvas } = require('@napi-rs/canvas');
 const fs = require('fs');
+const seedrandom = require('seedrandom');
+const rng = seedrandom('927018'); 
 
 class Model {
   constructor(network, path) {
     // Create the canvas variables
-    this.scale = 2;
+    this.scale = 1;
     
     this.path = path;
     this.network = network;
@@ -17,8 +19,6 @@ class Model {
     for(let i = 0; i < this.network.neurons.get("length"); i++) {
       this.lanes.push(i)
     }
-
-    console.log(this.lanes)
 
     if(typeof this.network.id === "number") {
       this.canvas = createCanvas(this.width, this.height);
@@ -73,7 +73,7 @@ class Model {
   }
 
   getLane(layer) {
-    const random = Math.floor(Math.random() * this.lanes.length);
+    const random = Math.floor(rng() * this.lanes.length);
     const answer = this.lanes[random];
     this.lanes.splice(random, 1);
 

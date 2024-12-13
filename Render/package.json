@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@napi-rs/canvas": "^0.1.65",
-    "console-png": "^1.2.1"
+    "console-png": "^1.2.1",
+    "seedrandom": "^3.0.5"
   }
 }

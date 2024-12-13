@@ -7,8 +7,12 @@ const { Population } = require("./Population");
     Valid gates:
     xor, xor3, and, swap
 
+    Path is just file name- i.e.
+    Test21, Blank21
 */
 
-const population = new Population("./Networks/Blank21.json", 10, 'xor');
+const population = new Population("Test21", 1, 'xor');
 
-console.table(population.getAnswers());
+population.networks[0].render();
+population.networks[0].mutate();
+population.networks[0].render();

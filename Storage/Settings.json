@@ -1,6 +1,6 @@
 {
   "startingInnovationTable": [
-      [0, 3]
+      [0, 3], [3, 4], [4,5], [5,6]
     ],
 
   "population": 100,
