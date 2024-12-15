@@ -20,14 +20,8 @@ class Model {
       this.lanes.push(i)
     }
 
-    if(typeof this.network.id === "number") {
-      this.canvas = createCanvas(this.width, this.height);
-      this.ctx = this.canvas.getContext("2d")
-    } else {
-      throw new Error(`network doesnt have id????. it might not be a network. id: "${network.id}"`);
-    }
-
-
+    this.canvas = createCanvas(this.width, this.height);
+    this.ctx = this.canvas.getContext("2d")
   }
 
   PNGify() {
@@ -64,7 +58,7 @@ class Model {
 
     for(let i = 0; i < this.network.connectors.size; i++) {
       const connector = this.network.connectors.get(i);
-      line(neurons.get(connector.innovation.from), neurons.get(connector.innovation.to), this.ctx)
+      line(neurons.get(connector.from), neurons.get(connector.to), this.ctx)
     }
 
     neuronPostions.forEach(postion => {

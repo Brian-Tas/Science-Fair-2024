@@ -24,7 +24,7 @@ class NeuralNetwork {
 
     // Create neuron map first
     // V for length
-    let neuronCounter
+    let neuronCounter = 0;
 
     const typeMap = [ "sensors", "hiddens", "outputs", "bias" ];
 
@@ -51,22 +51,20 @@ class NeuralNetwork {
     let connectorCounter = 0;
 
     for(let i = 0; i < this.genome.innovs[0].length; i++) {
-      debugger;
       const innovation = Innovation.table.get(this.genome.innovs[0][i]);
 
       this.connectors.set(
-        innovation.id,
+        connectorCounter,
         new Connector(
           innovation,
           this.genome.innovs[1][i]
         )
       );
 
-      this.neurons.get(innovation.from).from = connectorCounter;
-      this.neurons.get(innovation.to).to = connectorCounter;
+      this.neurons.get(innovation.from).from.push(connectorCounter);
+      this.neurons.get(innovation.to).to.push(connectorCounter);
       connectorCounter++;
     }
-    console.log(this.connectors.get(1))
 
     // Construct feed-forward 
     
@@ -166,35 +164,33 @@ class NeuralNetwork {
       throw new Error("issue above");
     }
 
-    if(firingConnector.innovation.status) {
-      const toNeuronId = this.neurons.get(firingConnector.innovation.to);
-      const fromNeuronId =  this.neurons.get(firingConnector.innovation.from);
+    const toNeuronId = this.neurons.get(firingConnector.to);
+    const fromNeuronId =  this.neurons.get(firingConnector.from);
 
-      const firingNeurons = [fromNeuronId, toNeuronId];
+    const firingNeurons = [fromNeuronId, toNeuronId];
 
-      if(typeof firingNeurons[0] === 'undefined' || typeof firingNeurons[1] === 'undefined') {
-        console.error(`No neuron with id of either "${fromNeuronId}" or "${toNeuronId}"`);
-        throw new Error("issue above");
-      }
-
-      toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
+    if(typeof firingNeurons[0] === 'undefined' || typeof firingNeurons[1] === 'undefined') {
+      console.error(`No neuron with id of either "${fromNeuronId}" or "${toNeuronId}"`);
+      throw new Error("issue above");
     }
+
+    toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
   }
   run(...args) {
     for(let i = 1; i < this.neurons.get("length"); i++) {
       this.neurons.get(i).value = 0;
     }
-
+    
     if(args.length !== this.neurons.get("sensors").length) {
       console.error(`NN arguments are different to sensor neurons. Inputs: "${args}" Sensors: ${this.neurons.get("sensors").length}`);
       throw new Error("issue above");
     }
-
+    
     // Iterates through args and set inputs accordingly
     for(let i = 0; i < args.length; i++) {
       this.neurons.get(this.neurons.get("sensors")[i]).value = args[i] * 2 - 1;
     }
-
+    
     // Iterates through all layers
     for(let i = 0; i < this.order.length; i++) {
 
@@ -203,6 +199,7 @@ class NeuralNetwork {
         this.fireConnector(this.order[i][j]);
       }
     }
+    debugger;
 
     const outputs = [];
 
@@ -257,7 +254,7 @@ class NeuralNetwork {
       for(let i = 0; i < this.connectors.size; i++) {
         let connector = this.connectors.get(i);
 
-        existingConnections.push([ connector.innovation.from, connector.innovation.to ]);
+        existingConnections.push([ connector.from, connector.to ]);
       }
 
       // Create new neuron(s)
@@ -270,13 +267,6 @@ class NeuralNetwork {
       }
 
       console.log(chosenConnections);
-    }
-  }
-  toJSON() {
-    const get = this.neurons.get;
-
-    return {
-      neurons: [ get('sensors'), get('hiddens'), get('outputs') ]
     }
   }
 }
