@@ -2,6 +2,7 @@
 const { Model } = require("../Render/Model.js");
 const { Connector } = require("./Connector.js");
 const { Neuron } = require("./Neuron.js");
+const { Innovation } = require('./Innovation.js');
 const settings = require("../Storage/Settings.json");
 
 // Activation functions
@@ -14,155 +15,133 @@ const tanh = n => {
 }
 
 class NeuralNetwork {
-  constructor(genome, innovationTable, activationFunctions=["tanh", "tanh"]) {
-    //Genome = [[innov id, weight],[innov id, weight]...]
-    //Innov Table = [innov, innov...]
-
-    // Class scoped innovation table
-    this.innovationTable = innovationTable;
+  constructor(genome, activationFunctions=["tanh", "tanh"]) {
     this.genome = genome;
     this.activationFunctions = activationFunctions;
-    this.id = NeuralNetwork.id++;
 
-    if(typeof this.genome !== 'object') {
-      console.error(`Please pass through a valid genome. Genome should be an object. Genome passed through: ${this.genome}`);
-      throw new Error("issue above");
-    }
-
-    if(typeof this.innovationTable !== "object") {
-      console.error(`Pass through a valid innovation table. First value should be an object, but is instead: ${this.innovationTable}`);
-      throw new Error("issue above");
-    }
-    
-    // List of all innovations this specific neural network has    
-    this.innovations = [];
-
-    for(let i = 0; i < this.genome.ids.length; i++) {
-      this.innovations.push(
-        this.innovationTable.get(this.genome.ids[i])
-      );
-    }
-    
-    // Create connectors & neurons for each
-    const typeMap = ['sensors', 'hiddens', 'outputs', 'bias'];
-
-    // Construct neurons
     this.neurons = new Map();
+    this.connectors = new Map();
 
-    this.neurons.set(0, new Neuron(0, typeMap[3]));
-    let neuronCount = 1;
+    // Create neuron map first
+    // V for length
+    let neuronCounter
 
-    for(let j = 0; j < this.genome.neurons.length; j++) {
-      for(let i = 0; i < this.genome.neurons[j].length; i++) {
-        neuronCount++;
+    const typeMap = [ "sensors", "hiddens", "outputs", "bias" ];
 
-        const neuronId = this.genome.neurons[j][i];
+    for(let i = 0; i < this.genome.neurons.length; i++) {
+      for(let j = 0; j < this.genome.neurons[i].length; j++) {
+        this.neurons.set(
+          this.genome.neurons[i][j],
+          new Neuron(
+            this.genome.neurons[i][j],
+            typeMap[i]
+          )
+        );
 
-        if(neuronId === 0) {
-          console.error("Dont set neuron to bias node");
-          throw new Error("issue above");
-        }
-
-        this.neurons.set(neuronId, new Neuron(neuronId, typeMap[j]));
+        neuronCounter++;
       }
 
-      this.neurons.set(typeMap[j], this.genome.neurons[j]);
+      this.neurons.set(typeMap[i], this.genome.neurons[i]);
     }
 
-    this.neurons.set("length", neuronCount);
+    this.neurons.set('length', neuronCounter); 
+    this.neurons.set(0, new Neuron(0, typeMap[3]));
 
-    // Construct connectors and assign nodes a "to" value
-    this.connectors = new Map();
-    
-    for(let i = 0; i < this.innovations.length; i++) {
-      const newConnector = new Connector(this.innovations[i], this.genome.weights[i], true);
-      this.connectors.set(newConnector.id, newConnector);
+    // Create connector map
+    let connectorCounter = 0;
 
-      this.neurons.get(newConnector.innovation.from).from.push(newConnector.id);
-      this.neurons.get(newConnector.innovation.to  ).to  .push(newConnector.id);
+    for(let i = 0; i < this.genome.innovs[0].length; i++) {
+      debugger;
+      const innovation = Innovation.table.get(this.genome.innovs[0][i]);
+
+      this.connectors.set(
+        innovation.id,
+        new Connector(
+          innovation,
+          this.genome.innovs[1][i]
+        )
+      );
+
+      this.neurons.get(innovation.from).from = connectorCounter;
+      this.neurons.get(innovation.to).to = connectorCounter;
+      connectorCounter++;
     }
+    console.log(this.connectors.get(1))
 
     // Construct feed-forward 
-    this.layers = this.genome.layers;
     
-    if(this.layers === null) {
-      this.layers = [];
+    this.layers = [];
 
-      let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
+    let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
 
-      let fired = [];
+    let fired = [];
 
-      for(let k = 0; k < this.neurons.get("length"); k++) {
-        /*
-            .from =
-            []
-            || <- value
-            [] <- neuron
+    for(let k = 0; k < this.neurons.get("length"); k++) {
+      /*
+          .from =
+          []
+          || <- value
+          [] <- neuron
 
-            .to =
-            [] <- neuron
-            || <- value
-            [] 
+          .to =
+          [] <- neuron
+          || <- value
+          [] 
 
-        */
+      */
 
-        let connectors = Array.from(currentNeuronLevel, x => this.neurons.get(x).from).flat();
+      let connectors = Array.from(currentNeuronLevel, x => this.neurons.get(x).from).flat();
 
-        fired.push(connectors);
+      fired.push(connectors);
 
-        fired = fired.flat();
-        fired = [...new Set(fired)];
-  
-        this.layers.push(currentNeuronLevel);
-  
-        currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).innovation.to);
-        currentNeuronLevel = [...new Set(currentNeuronLevel)];
+      fired = fired.flat();
+      fired = [...new Set(fired)];
 
-        let marked = [];
+      this.layers.push(currentNeuronLevel);
 
-        for(let i = 0; i < currentNeuronLevel.length; i++) {
-          const neuronConnectors = this.neurons.get(currentNeuronLevel[i]).to;
+      currentNeuronLevel = Array.from(connectors, x => this.connectors.get(x).to);
+      currentNeuronLevel = [...new Set(currentNeuronLevel)];
 
-          neuronConnectors.forEach(connector => {
-            if(!fired.includes(connector)) {
-              marked.push(currentNeuronLevel[i]);
-            }
-          });
-        }
+      let marked = [];
 
-        marked = [...new Set(marked)];
+      for(let i = 0; i < currentNeuronLevel.length; i++) {
+        const neuronConnectors = this.neurons.get(currentNeuronLevel[i]).to;
 
-        marked.forEach(mark => {
-          currentNeuronLevel.splice(currentNeuronLevel.indexOf(mark), 1);
+        neuronConnectors.forEach(connector => {
+          if(!fired.includes(connector)) {
+            marked.push(currentNeuronLevel[i]);
+          }
         });
-
-        if(currentNeuronLevel.length === 0) {
-          break;
-        }
       }
-    } 
 
-    this.genome.layers = this.layers
+      marked = [...new Set(marked)];
 
-    this.order = this.genome.order;
-    
-    if(this.order === null) {
-      this.order = [];
+      marked.forEach(mark => {
+        currentNeuronLevel.splice(currentNeuronLevel.indexOf(mark), 1);
+      });
 
-      for(let i = 0; i < this.layers.length - 1; i++) {
-        let connectorLayer = [];
-
-        for(let j = 0; j < this.layers[i].length; j++) {
-          connectorLayer.push(
-            this.neurons.get(
-              this.layers[i][j]
-            ).from
-          );
-        }
-        
-        connectorLayer = connectorLayer.flat();
-        this.order.push(connectorLayer);
+      if(currentNeuronLevel.length === 0) {
+        break;
       }
+    }
+
+    this.order = [];
+
+    for(let i = 0; i < this.layers.length - 1; i++) {
+      let connectorLayer = [];
+
+      for(let j = 0; j < this.layers[i].length; j++) {
+        connectorLayer.push(
+          this.neurons.get(
+            this.layers[i][j]
+          ).from
+        );
+      }
+      
+      connectorLayer = connectorLayer.flat();
+      this.order.push(connectorLayer);
+
+      this.genome.order = this.order
     }
     // Sets bias node
     this.neurons.get(0).value = 1;
@@ -187,7 +166,7 @@ class NeuralNetwork {
       throw new Error("issue above");
     }
 
-    if(firingConnector.status) {
+    if(firingConnector.innovation.status) {
       const toNeuronId = this.neurons.get(firingConnector.innovation.to);
       const fromNeuronId =  this.neurons.get(firingConnector.innovation.from);
 
@@ -250,20 +229,55 @@ class NeuralNetwork {
       mutation: newMutation || settings.mutation.odds.mutation
     };
 
-    // Get all valid new connections
-    let connections = [];
-
-    for(let i = 0; i < this.layers.length; i++) {
-      for(let j = 0; j < this.layers[i].length; j++) {
-        for(let h = i + 1; h < this.layers.length; h++) {
-          for(let q = 0; q < this.layers[h].length; q++) {
-            connections.push([this.layers[i][j], this.layers[h][q]]);
-          }
-        }  
+    if(Math.random() < odds.mutation) {
+      // Get all valid new connections
+      let possibleConnections = [];
+  
+      for(let i = 0; i < this.layers.length; i++) {
+        for(let j = 0; j < this.layers[i].length; j++) {
+          for(let h = i + 1; h < this.layers.length; h++) {
+            for(let q = 0; q < this.layers[h].length; q++) {
+              possibleConnections.push([this.layers[i][j], this.layers[h][q]]);
+            }
+          }  
+        }
       }
-    }
+  
+      let newConnections = [];
+  
+      for(let i = 0; i < possibleConnections.length; i++) {
+        if(Math.random() < odds.newConnection) {
+          newConnections.push(possibleConnections[i]);
+        }
+      }
 
-    console.log(connections);
+      // Get all existing connections
+      let existingConnections = [];
+      
+      for(let i = 0; i < this.connectors.size; i++) {
+        let connector = this.connectors.get(i);
+
+        existingConnections.push([ connector.innovation.from, connector.innovation.to ]);
+      }
+
+      // Create new neuron(s)
+      let chosenConnections = [];
+
+      for(let i = 0; i < existingConnections.length; i++) {
+        if(Math.random() < odds.newNeuron) {
+          chosenConnections.push(existingConnections[i]);
+        }
+      }
+
+      console.log(chosenConnections);
+    }
+  }
+  toJSON() {
+    const get = this.neurons.get;
+
+    return {
+      neurons: [ get('sensors'), get('hiddens'), get('outputs') ]
+    }
   }
 }
 

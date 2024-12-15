@@ -13,6 +13,6 @@ const { Population } = require("./Population");
 
 const population = new Population("Test21", 1, 'xor');
 
-population.networks[0].render();
-population.networks[0].mutate();
-population.networks[0].render();
+console.log(population.networks[0].run(1, 1))
+
+// population.networks[0].mutate();

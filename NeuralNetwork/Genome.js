@@ -1,6 +1,9 @@
 class Genome {
-    constructor(neurons = [[],[],[]], weights = [], innovIds = [], order=null, layers=null) {
+    constructor(innovs, neurons, order = null, layers = null) {
       
+      
+      const [ innovIds, weights ] = innovs;
+
       if(weights.length !== innovIds.length) {
         console.error(`Innovation Id's aren't matched to innovation weights at Genome. Innovations: "${innovIds}" weights: ${weights}`);
         throw new Error("issue above");

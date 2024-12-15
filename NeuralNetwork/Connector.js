@@ -1,7 +1,7 @@
 let connectorCounter = 0;
 
 class Connector {
-    constructor(innovation, weight, status=true) {
+    constructor(innovation, weight) {
       if(typeof innovation === 'undefined') {
         console.error("No innovation provided at new connector");
         throw new Error("issue above");
@@ -10,10 +10,10 @@ class Connector {
         console.error("No weight provided at new connector");
         throw new Error("issue above");
       }
-      this.innovation = innovation;
       this.weight = weight;
       this.id = innovation.id;
-      this.status = status;
+      this.from = innovation.from;
+      this.to = innovation.to;
   }
 }
   

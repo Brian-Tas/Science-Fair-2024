@@ -13,7 +13,9 @@ class Population {
     constructor(path, size, gate) {
         this.size = size;
         this.gate = Population.gates.get(gate);
-        this.defaultGenome = require(`./Storage/Networks/${path}.json`);
+
+        const JSONgenome = require(`./Storage/Networks/${path}.json`);
+        this.genomes = Array(size).fill(JSONgenome);
 
         // Error handling in the case args arent the correct datatype
         if(typeof path !== 'string') {
@@ -28,16 +30,8 @@ class Population {
             throw new Error(`Passed gate is not a valid gate. Gate: ${this.gate} \nValid Gates: ${Array.from(Population.gates.keys())}`);
         }
 
-        this.genomes = []; // Array of genome *objects*
-
-        // Fill this.genomes with the default blank
-        let g = this.defaultGenome;
-        for(let i = 0; i < size; i++) {
-            this.genomes.push(new Genome(g.neurons, g.weights, g.ids));
-        }
-
         this.networks = []; // Is updated with .network() from the genome array
-        this.network();
+        this.updateNetworks();
     }
 
     getAnswers() {
@@ -46,10 +40,10 @@ class Population {
         }
     }
 
-    network() {
+    updateNetworks() {
         for(let i = 0; i < this.genomes.length; i++) {
             this.networks.push(
-                new NeuralNetwork(this.genomes[i], Innovation.table)
+                new NeuralNetwork(this.genomes[i])
             );
         }
     }
