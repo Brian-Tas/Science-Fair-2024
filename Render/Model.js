@@ -4,11 +4,11 @@ const seedrandom = require('seedrandom');
 const rng = seedrandom('927018'); 
 
 class Model {
-  constructor(network, path) {
+  constructor(network) {
     // Create the canvas variables
     this.scale = 1;
     
-    this.path = path;
+    this.path = `/outputs/${Model.modelIds++}.png`;
     this.network = network;
     
     this.width = (this.network.layers.length * 8) * this.scale + 4;
@@ -77,10 +77,12 @@ class Model {
   getX(neuron) {
     return (neuron * 8) * this.scale + 4;
   }
-
+  
   getY(layer) {
     return (layer * 4) * this.scale + 4;
   }
+
+  static modelIds = 0;
 }
 
 const longestArray = arr => {
@@ -116,6 +118,7 @@ const render = path => {
     if (err) throw err;
     console.log(string);
   });
+
 }
 
 module.exports = { Model }

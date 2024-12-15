@@ -210,7 +210,7 @@ class NeuralNetwork {
     return outputs;
   }
   render() {
-    this.model = new Model(this, `/outputs/${this.id}.png`);
+    this.model = new Model(this);
 
     this.model.model();
     this.model.PNGify();
@@ -257,8 +257,8 @@ class NeuralNetwork {
         existingConnections.push([ connector.from, connector.to ]);
       }
 
-      // Create new neuron(s)
-      let chosenConnections = [];
+      // Choose connection to create new neuron(s)
+      let newNeuronChosenConnections = [];
 
       for(let i = 0; i < existingConnections.length; i++) {
         if(Math.random() < odds.newNeuron) {
@@ -266,7 +266,16 @@ class NeuralNetwork {
         }
       }
 
-      console.log(chosenConnections);
+      // Create the now chosen neuron(s)
+
+      for(let i = 0; i < newNeuronChosenConnections.length; i++) {
+        let innovation = Innovation.get(newNeuronChosenConnections[i]);
+        
+        
+
+
+
+      }
     }
   }
 }
