@@ -36,16 +36,17 @@ class NeuralNetwork {
             this.genome.neurons[i][j],
             typeMap[i]
           )
-        );
+        );    
 
+        this.neurons.set(typeMap[i], this.genome.neurons[i]);
         neuronCounter++;
       }
 
-      this.neurons.set(typeMap[i], this.genome.neurons[i]);
     }
 
     this.neurons.set('length', neuronCounter); 
     this.neurons.set(0, new Neuron(0, typeMap[3]));
+    this.neurons.set('all', [this.neurons.get('sensors'), this.neurons.get('hiddens'), this.neurons.get('outputs')].flat())
 
     // Create connector map
     let connectorCounter = 0;
@@ -53,18 +54,31 @@ class NeuralNetwork {
     for(let i = 0; i < this.genome.innovs[0].length; i++) {
       const innovation = Innovation.table.get(this.genome.innovs[0][i]);
 
+      if(innovation.type === 'neuron') {
+        continue;
+      }
+
+      const connector = new Connector(
+        innovation,
+        this.genome.innovs[1][i]
+      );
+
       this.connectors.set(
         connectorCounter,
-        new Connector(
-          innovation,
-          this.genome.innovs[1][i]
-        )
+        connector
       );
+
+      this.connectors.set(
+        Innovation.toCon([innovation.from, innovation.to, innovation.type]),
+        connector
+      )
 
       this.neurons.get(innovation.from).from.push(connectorCounter);
       this.neurons.get(innovation.to).to.push(connectorCounter);
       connectorCounter++;
     }
+
+    this.connectors.set('length', connectorCounter);
 
     // Construct feed-forward 
     
@@ -138,8 +152,6 @@ class NeuralNetwork {
       
       connectorLayer = connectorLayer.flat();
       this.order.push(connectorLayer);
-
-      this.genome.order = this.order
     }
     // Sets bias node
     this.neurons.get(0).value = 1;
@@ -177,8 +189,9 @@ class NeuralNetwork {
     toNeuronId.value += NeuralNetwork.activationFunctionMap.get(this.activationFunctions[0])(fromNeuronId.value)  * firingConnector.weight;
   }
   run(...args) {
+    debugger;
     for(let i = 1; i < this.neurons.get("length"); i++) {
-      this.neurons.get(i).value = 0;
+      this.neurons.get(this.neurons.get('all')[i]).value = 0;
     }
     
     if(args.length !== this.neurons.get("sensors").length) {
@@ -251,7 +264,7 @@ class NeuralNetwork {
       // Get all existing connections
       let existingConnections = [];
       
-      for(let i = 0; i < this.connectors.size; i++) {
+      for(let i = 0; i < this.connectors.get('length'); i++) {
         let connector = this.connectors.get(i);
 
         existingConnections.push([ connector.from, connector.to ]);
@@ -262,19 +275,49 @@ class NeuralNetwork {
 
       for(let i = 0; i < existingConnections.length; i++) {
         if(Math.random() < odds.newNeuron) {
-          chosenConnections.push(existingConnections[i]);
+          newNeuronChosenConnections.push(existingConnections[i]);
         }
       }
 
       // Create the now chosen neuron(s)
+      newNeuronChosenConnections = [ [ 3, 4 ] ];
 
       for(let i = 0; i < newNeuronChosenConnections.length; i++) {
-        let innovation = Innovation.get(newNeuronChosenConnections[i]);
+        const newNeuronInnovationRaw = [...newNeuronChosenConnections[i].flat(), 'neuron'];
+
+        debugger;
+
+        let newNeuronInnovation = Innovation.table.get(Innovation.toCon(newNeuronInnovationRaw));
+
+        if(typeof newNeuronInnovation === 'undefined') {
+          Innovation.newInnovation(newNeuronInnovationRaw);
+          newNeuronInnovation = Innovation.table.get(Innovation.toCon(newNeuronInnovationRaw));
+        }
+
+        const newConnector1Id = newNeuronInnovation.id + 1;
+        const newConnector2Id = newNeuronInnovation.id + 2;
+
+      /*[]
+        || <- newConnector2Id
+        [] <- newNeuronInnovationId
+        || <- newConnector1Id
+        []*/
+
+        const oldConnector = this.connectors.get(
+          Innovation.toCon([...newNeuronChosenConnections[i], 'connector'].flat())
+        );
         
-        
+        console.table(this.genome)
 
+        this.genome.innovs.splice(this.genome.innovs.indexOf(oldConnector.id), 1);
 
+        this.genome.neurons[1].push(Innovation.getNeuron() - 1);
 
+        this.genome.innovs[0].push(newConnector1Id);
+        this.genome.innovs[0].push(newConnector2Id);
+        this.genome.innovs[0].push(newNeuronInnovation.id);
+
+        console.table(this.genome)
       }
     }
   }

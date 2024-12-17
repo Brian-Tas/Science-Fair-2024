@@ -6,7 +6,6 @@ const { Innovation } = require("./NeuralNetwork/Innovation");
 const { Genome } = require("./NeuralNetwork/Genome");
 const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
 
-settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
 
 
 class Population {

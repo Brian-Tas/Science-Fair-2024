@@ -10,6 +10,7 @@ class Innovation {
 
     this.from = from;
     this.to = to;
+    this.type = type;
     this.id = Innovation.counter++;
   }
 
@@ -34,17 +35,39 @@ class Innovation {
 
     const innovation = new Innovation(arr[0], arr[1], arr[2]);
 
-    Innovation.table.set(arr, innovation);
+    Innovation.table.set(Innovation.toCon(arr), innovation);
+    Innovation.table.set(innovation.id, innovation);
 
     if(arr[2] === 'neuron') {
-      const connectorOne = new Innovation(arr[0])
+      const newNeuronId = Innovation.getNeuron();
+      Innovation.addNeuron(newNeuronId);
 
-      Innovation.table.set()
+      const connectorOne = [arr[0], newNeuronId, 'connector'];
+      const connectorTwo = [newNeuronId, arr[1], 'connector'];
+      
+      Innovation.newInnovation(connectorOne);
+      Innovation.newInnovation(connectorTwo);
     }
 
-    Innovation.table.set(innovation.id, innovation);
   }
 
+  static addNeuron(id) {
+    if(Innovation.neurons.includes(id)) {
+      throw new Error(`Neuron already in Innovation list. Neuron: ${id} Innovation neurons: ${Innovation.neurons}`);
+    }
+
+    Innovation.neurons.push(id);
+  }
+
+  static getNeuron() {
+    return Innovation.neurons[Innovation.neurons.length - 1] + 1;
+  }
+
+  static toCon(arr) {
+    return `${arr[0]}->${arr[1]}: ${arr[2]}`;
+  }
+
+  static neurons = [ 0 ];
   static counter = 0;
 }
 

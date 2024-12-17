@@ -1,10 +1,13 @@
 const { Innovation } = require("./NeuralNetwork/Innovation");
-const settings = require("./Storage/Settings.json");
-
 const { Population } = require("./Population");
 
+const settings = require("./Storage/Settings.json");
+
+settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
+settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
+
 /*
-    Valid gates:
+    Valid gates-
     xor, xor3, and, swap
 
     Path is just file name- i.e.
@@ -13,5 +16,4 @@ const { Population } = require("./Population");
 
 const population = new Population("Test21", 1, 'xor');
 
-// console.log(population.networks[0].run(1, 1));
 population.networks[0].mutate();

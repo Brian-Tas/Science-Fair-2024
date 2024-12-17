@@ -1,13 +1,19 @@
 {
   "startingInnovationTable": [
-      [0, 3], [1, 2], [3, 4], [4,5], [5,6]
-    ],
+      [0, 3, "connector"], [1, 2, "connector"], [3, 4, "connector"],
+      [4, 5, "connector"], [5, 6, "connector"]
+  ],
+
+  "startingNeurons": [
+    1, 2, 3,
+    4, 5, 6
+  ],
 
   "population": 100,
   "mutation": {
     "maxWeightAffect": 0.5,
     "odds": {
-      "newNeuron": 0.06,
+      "newNeuron": 0.085,
       "newConnection": 0.06,
       "weightChange": 0.06,
       "mutation": 1
