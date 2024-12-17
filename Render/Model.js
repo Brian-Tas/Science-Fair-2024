@@ -1,3 +1,5 @@
+var pngStringify = require('console-png');
+const { verify } = require('crypto');
 const { createCanvas } = require('@napi-rs/canvas');
 const fs = require('fs');
 const seedrandom = require('seedrandom');
@@ -56,7 +58,7 @@ class Model {
       }
     }
 
-    for(let i = 0; i < this.network.connectors.size; i++) {
+    for(let i = 0; i < this.network.connectors.get("length"); i++) {
       const connector = this.network.connectors.get(i);
       line(neurons.get(connector.from), neurons.get(connector.to), this.ctx)
     }
@@ -109,8 +111,6 @@ const rect = (x, y, s, ctx) => {
 }
 
 const render = path => {
-  var pngStringify = require('console-png');
-  const { verify } = require('crypto');
  
   var image = require('fs').readFileSync(__dirname + path);
  
