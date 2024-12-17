@@ -8,22 +8,22 @@ const rng = seedrandom('927018');
 class Model {
   constructor(network) {
     // Create the canvas variables
-    this.scale = 1;
+    this.scale = 0.9;
     
     this.path = `/outputs/${Model.modelIds++}.png`;
     this.network = network;
     
     this.width = (this.network.layers.length * 8) * this.scale + 4;
-    this.height = (this.network.neurons.get("length") * 4) * this.scale + 4;
+    this.height = (this.network.neurons.get("length") * 4) * this.scale + 10;
 
     this.lanes = [];
 
     for(let i = 0; i < this.network.neurons.get("length"); i++) {
-      this.lanes.push(i)
+      this.lanes.push(i);
     }
 
     this.canvas = createCanvas(this.width, this.height);
-    this.ctx = this.canvas.getContext("2d")
+    this.ctx = this.canvas.getContext("2d");
   }
 
   PNGify() {
@@ -48,6 +48,7 @@ class Model {
     let lanes = new Map();
 
     for(let i = 0; i < this.network.layers.length; i++) {
+      debugger;
       for(let j = 0; j < this.network.layers[i].length; j++) {
         const lane = this.getLane();
         neuronPostions.push([this.getX(i), this.getY(lane), 3, this.ctx]);

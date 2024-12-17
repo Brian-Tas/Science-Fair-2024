@@ -44,8 +44,11 @@ class NeuralNetwork {
 
     }
 
-    this.neurons.set('length', neuronCounter); 
     this.neurons.set(0, new Neuron(0, typeMap[3]));
+    neuronCounter++;
+
+    this.neurons.set('length', neuronCounter);
+
     this.neurons.set('all', [this.neurons.get('sensors'), this.neurons.get('hiddens'), this.neurons.get('outputs')].flat())
 
     // Create connector map
@@ -270,7 +273,7 @@ class NeuralNetwork {
       }
 
       // Create the now chosen neuron(s)
-      newNeuronChosenConnections = [ [3, 4] ];
+      newNeuronChosenConnections = [ ];
       
       for(let i = 0; i < newNeuronChosenConnections.length; i++) {
         const newNeuronInnovationRaw = [...newNeuronChosenConnections[i].flat(), 'neuron'];
@@ -323,7 +326,7 @@ class NeuralNetwork {
         }
       }
 
-      newChosenConnections = [];
+      newChosenConnections = [ [2, 5] ];
 
       for(let i = 0; i < newChosenConnections.length; i++) {
         const newConnectorInnovationRaw = [...newChosenConnections[i].flat(), 'connector'];
@@ -345,8 +348,6 @@ class NeuralNetwork {
 
   update() {
     const newNetwork = new NeuralNetwork(this.genome);
-
-    debugger;
 
     this.connectors = newNetwork.connectors;
     this.neurons = newNetwork.neurons;

@@ -15,7 +15,3 @@ settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
 */
 
 const population = new Population("Test21", 1, 'xor');
-
-console.log(population.networks[0].render());
-population.networks[0].mutate();
-console.log(population.networks[0].render());
