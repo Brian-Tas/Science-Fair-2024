@@ -239,6 +239,22 @@ class NeuralNetwork {
     this.model.render();
   }
 
+  addConnector(innovId, weight) {
+    this.genome.innovs[0].push(innovId);
+    this.genome.innovs[1].push(weight);
+  }
+
+  addNeuron(innovId, weight) {
+    const innovation = Innovation.table.get(innovId);
+
+    if(typeof innovation === 'undefined') {
+      throw new Error(`Passed Innovation to "addneuron" is not found. Id: ${innovId}`);
+    }
+
+    this.genome.innovs[0].push(innovation.id);
+    this.genome.innovs[1].push(null);
+  }
+
   update(genome = this.genome) {
     const newNetwork = new NeuralNetwork(this.genome);
 

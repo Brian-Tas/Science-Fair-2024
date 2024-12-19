@@ -14,9 +14,9 @@
     "maxWeightAffect": 0.5,
     "odds": {
       "newNeuron": 0,
-      "newConnection": 0.1,
+      "newConnection": 0.03,
       "weightChange": 0.06,
-      "mutation": 1
+      "mutation": 0.5
     }
   }
 }

@@ -33,11 +33,6 @@ class Innovation {
       throw new Error(`newInnovation type is not 'neuron' or 'connector'. Value: ${arr[2]}`);
     }
 
-    const innovation = new Innovation(arr[0], arr[1], arr[2]);
-
-    Innovation.table.set(Innovation.toCon(arr), innovation);
-    Innovation.table.set(innovation.id, innovation);
-
     if(arr[2] === 'neuron') {
       const newNeuronId = Innovation.getNeuron();
       Innovation.addNeuron(newNeuronId);
@@ -47,8 +42,14 @@ class Innovation {
       
       Innovation.newInnovation(connectorOne);
       Innovation.newInnovation(connectorTwo);
-    }
 
+      const innovation = new Innovation(arr[0], arr[1], newNeuronId);
+    } else {
+      const innovation = new Innovation(arr[0], arr[1], null);
+    }
+    
+    Innovation.table.set(Innovation.toCon(arr), innovation);
+    Innovation.table.set(innovation.id, innovation);
   }
 
   static addNeuron(id) {
@@ -64,7 +65,7 @@ class Innovation {
   }
 
   static toCon(arr) {
-    return `${arr[0]}->${arr[1]}: ${arr[2]}`;
+    return `${arr[0]}->${arr[1]}:${arr[2]}`;
   }
 
   static neurons = [ 0 ];

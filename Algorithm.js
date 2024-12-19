@@ -18,6 +18,8 @@ const population = new Population("Test21", 10, 'xor');
 
 population.model(0);
 console.log(population.networks[0].genome);
-population.mutate(0);
+for(let i = 0; i < 20; i++) {
+    population.mutate(0);
+}
 population.model(0);
 console.log(population.networks[0].genome);

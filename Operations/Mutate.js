@@ -53,6 +53,18 @@ const mutate = (network, mutationChance = null) => {
         }
 
         // Get array of new connections
+        let newConnectors = [];
+
+        for(let i = 0; i < possibleConnections.length; i++) 
+        {
+            if(Math.random() < settings.mutation.odds.newConnection) 
+            {
+                newConnectors.push(
+                    possibleConnections[i]
+                );
+            }
+        }
+
         // Add them
         // Call update
         // Get array of new neurons
