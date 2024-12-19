@@ -1,9 +1,9 @@
 const settings = require("./Storage/Settings.json");
 const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
+const { mutate } = require("./Operations/Mutate");
 
 // Import innovation
 const { Innovation } = require("./NeuralNetwork/Innovation");
-const { Genome } = require("./NeuralNetwork/Genome");
 const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
 
 
@@ -45,6 +45,21 @@ class Population {
                 new NeuralNetwork(this.genomes[i])
             );
         }
+    }
+
+    mutate(id) {
+        const network = this.networks[id];
+
+        if(typeof network === undefined) {
+            throw new Error(`Network with id of ${id} does not exist. Cannot mutate`);
+        }
+
+        mutate(network);
+        this.genomes[id] = network.genome;
+    }
+
+    model(id) {
+        this.networks[id].render();
     }
 
     static gates = new Map([

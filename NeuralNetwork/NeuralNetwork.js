@@ -19,6 +19,14 @@ class NeuralNetwork {
     this.genome = genome;
     this.activationFunctions = activationFunctions;
 
+    if(this.genome.innovs[0].length !== [...new Set(this.genome.innovs[0])].length) {
+      throw new Error(`Duplicate Innovs detected. Innovs: ${this.genome.innovs[0]}`)
+    }
+
+    if(this.genome.innovs[0].length !== this.genome.innovs[1].length) {
+      throw new Error(`Innovs aren't matched to weights. Innovs: ${this.genome.innovs[0]} \nWeights: ${this.genome.innovs[1]}`)
+    }
+
     this.neurons = new Map();
     this.connectors = new Map();
 
@@ -230,123 +238,8 @@ class NeuralNetwork {
     this.model.PNGify();
     this.model.render();
   }
-  mutate(maxWeightAffect, newNeuronChance, newConnectorChance, newWeightChance, newMutation) {
-    const weightAffect = maxWeightAffect || settings.mutation.maxWeightAffect;
 
-    const odds = {
-      newNeuron: newNeuronChance || settings.mutation.odds.newNeuron,
-      newConnection: newConnectorChance || settings.mutation.odds.newConnection,
-      weightChange: newWeightChance || settings.mutation.odds.weightChange,
-      mutation: newMutation || settings.mutation.odds.mutation
-    };
-
-    if(Math.random() < odds.mutation) {
-      // Get all valid new connections
-      let possibleConnections = [];
-  
-      for(let i = 0; i < this.layers.length; i++) {
-        for(let j = 0; j < this.layers[i].length; j++) {
-          for(let h = i + 1; h < this.layers.length; h++) {
-            for(let q = 0; q < this.layers[h].length; q++) {
-              possibleConnections.push([this.layers[i][j], this.layers[h][q]]);
-            }
-          }  
-        }
-      }
-
-      // Get all existing connections
-      let existingConnections = [];
-      
-      for(let i = 0; i < this.connectors.get('length'); i++) {
-        let connector = this.connectors.get(i);
-
-        existingConnections.push([ connector.from, connector.to ]);
-      }
-
-      // Choose connection to create new neuron(s)
-      let newNeuronChosenConnections = [];
-
-      for(let i = 0; i < existingConnections.length; i++) {
-        if(Math.random() < odds.newNeuron) {
-          newNeuronChosenConnections.push(existingConnections[i]);
-        }
-      }
-
-      // Create the now chosen neuron(s)
-      newNeuronChosenConnections = [ ];
-      
-      for(let i = 0; i < newNeuronChosenConnections.length; i++) {
-        const newNeuronInnovationRaw = [...newNeuronChosenConnections[i].flat(), 'neuron'];
-        
-        let newNeuronInnovation = Innovation.table.get(Innovation.toCon(newNeuronInnovationRaw));
-        
-        if(typeof newNeuronInnovation === 'undefined') {
-          Innovation.newInnovation(newNeuronInnovationRaw);
-          newNeuronInnovation = Innovation.table.get(Innovation.toCon(newNeuronInnovationRaw));
-        }
-        
-        const newConnector1Id = newNeuronInnovation.id + 1;
-        const newConnector2Id = newNeuronInnovation.id + 2;
-        
-        /*[]
-        || <- newConnector2Id
-        [] <- newNeuronInnovationId
-        || <- newConnector1Id
-        []*/
-
-        const oldConnector = this.connectors.get(
-          Innovation.toCon([...newNeuronChosenConnections[i], 'connector'].flat())
-        );
-        
-        this.genome.neurons[1].push(Innovation.getNeuron() - 1);
-
-        const oldConnectorIndex = this.genome.innovs[0].indexOf(oldConnector.id);
-
-        this.genome.innovs[0].splice(oldConnectorIndex, 1);
-        this.genome.innovs[1].splice(oldConnectorIndex, 1);
-          
-          
-        this.genome.innovs[0].push(newConnector1Id);
-        this.genome.innovs[0].push(newConnector2Id);
-        this.genome.innovs[0].push(newNeuronInnovation.id);
-
-        this.genome.innovs[1].push(1);
-        this.genome.innovs[1].push(oldConnector.weight);
-        this.genome.innovs[1].push(null);
-
-        this.update();
-      }
-
-      // Mutation Connections -
-      let newChosenConnections = [];
-
-      for(let i = 0; i < possibleConnections.length; i++) {
-        if(Math.random() < odds.newConnection) {
-          newChosenConnections.push(possibleConnections[i]);
-        }
-      }
-
-      newChosenConnections = [ [2, 5] ];
-
-      for(let i = 0; i < newChosenConnections.length; i++) {
-        const newConnectorInnovationRaw = [...newChosenConnections[i].flat(), 'connector'];
-
-        let newConnectorInnovation = Innovation.table.get(Innovation.toCon(newConnectorInnovationRaw));
-
-        if(typeof newConnectorInnovation === 'undefined') {
-          Innovation.newInnovation(newConnectorInnovationRaw);
-          newConnectorInnovation = Innovation.table.get(Innovation.toCon(newConnectorInnovationRaw));
-        }
-
-        this.genome.innovs[0].push(newConnectorInnovation.id);
-        this.genome.innovs[1].push(1);
-        
-        this.update();
-      }
-    }
-  }
-
-  update() {
+  update(genome = this.genome) {
     const newNetwork = new NeuralNetwork(this.genome);
 
     this.connectors = newNetwork.connectors;

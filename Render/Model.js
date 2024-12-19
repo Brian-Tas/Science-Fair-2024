@@ -10,7 +10,7 @@ class Model {
     // Create the canvas variables
     this.scale = 0.9;
     
-    this.path = `/outputs/${Model.modelIds++}.png`;
+    this.path = `/network.png`;
     this.network = network;
     
     this.width = (this.network.layers.length * 8) * this.scale + 4;
@@ -48,7 +48,6 @@ class Model {
     let lanes = new Map();
 
     for(let i = 0; i < this.network.layers.length; i++) {
-      debugger;
       for(let j = 0; j < this.network.layers[i].length; j++) {
         const lane = this.getLane();
         neuronPostions.push([this.getX(i), this.getY(lane), 3, this.ctx]);
