@@ -1,7 +1,9 @@
 const { Innovation } = require("./NeuralNetwork/Innovation");
+const { mutate } = require("./Operations/Mutate");
 const { Population } = require("./Population");
 
 const settings = require("./Storage/Settings.json");
+
 
 settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
 settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
@@ -15,11 +17,3 @@ settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
 */
 
 const population = new Population("Test21", 10, 'xor');
-
-population.model(0);
-console.log(population.networks[0].genome);
-for(let i = 0; i < 20; i++) {
-    population.mutate(0);
-}
-population.model(0);
-console.log(population.networks[0].genome);

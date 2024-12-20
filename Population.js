@@ -33,12 +33,6 @@ class Population {
         this.updateNetworks();
     }
 
-    getAnswers() {
-        for(let i = 0; i < networks.length; i++) {
-            console.table(getAnswers(this.networks[i], this.gate));
-        }
-    }
-
     updateNetworks() {
         for(let i = 0; i < this.genomes.length; i++) {
             this.networks.push(

@@ -25,16 +25,18 @@ class Innovation {
       throw new Error(`Second newInnovation input is not the 'to' neuron. Type: ${typeof arr[1]} Value: ${arr[1]}`);
     }
 
-    if(typeof arr[2] !== 'string') {
-      throw new Error(`Third newInnovaiton input is not the innov type. Type (should be string): ${typeof arr[2]} Value: ${arr[2]}`)
+    if(arr[2] !== 'connector' && arr[2] !== 'neuron') {
+      throw new Error(`newInnovation type is not neuron or connector. Value: ${arr[2]} Innovation: ${arr}`);
     }
 
-    if(arr[2] !== 'neuron' && arr[2] !== 'connector') {
-      throw new Error(`newInnovation type is not 'neuron' or 'connector'. Value: ${arr[2]}`);
+    if(typeof Innovation.table.get(Innovation.toCon(arr)) !== 'undefined') {
+      throw new Error(`Cannot add innovation to table thats already added. Innovation: ${Innovation.toCon(arr)}`)
     }
+
+    let newNeuronId = null;
 
     if(arr[2] === 'neuron') {
-      const newNeuronId = Innovation.getNeuron();
+      newNeuronId = Innovation.getNeuron();
       Innovation.addNeuron(newNeuronId);
 
       const connectorOne = [arr[0], newNeuronId, 'connector'];
@@ -42,14 +44,17 @@ class Innovation {
       
       Innovation.newInnovation(connectorOne);
       Innovation.newInnovation(connectorTwo);
-
-      const innovation = new Innovation(arr[0], arr[1], newNeuronId);
-    } else {
-      const innovation = new Innovation(arr[0], arr[1], null);
     }
+
+    const innovation = new Innovation(arr[0], arr[1], newNeuronId);
     
-    Innovation.table.set(Innovation.toCon(arr), innovation);
+    Innovation.table.set(Innovation.toCon([arr[0], arr[1], newNeuronId]), innovation);
     Innovation.table.set(innovation.id, innovation);
+
+    const keyArray = Array.from(Innovation.table.keys());
+    if(keyArray.length !== [... new Set(keyArray)].length) {
+      throw new Error(`Duplicate innovation detected`);
+    }
   }
 
   static addNeuron(id) {
@@ -65,7 +70,15 @@ class Innovation {
   }
 
   static toCon(arr) {
-    return `${arr[0]}->${arr[1]}:${arr[2]}`;
+    let arr2 = arr[2];
+
+    if(arr2 === 'connector') {
+      arr2 = null;
+    } else if (typeof arr2 !== 'number' && arr2 !== null) {
+      throw new Error(`arr[2] passed to toCon is not any valid input. arr[2]: ${arr2}`)
+    }
+
+    return `${arr[0]}->${arr[1]}:${arr2}`;
   }
 
   static neurons = [ 0 ];
