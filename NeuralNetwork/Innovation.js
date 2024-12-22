@@ -1,5 +1,5 @@
 class Innovation {
-  constructor(from, to, type) {
+  constructor(from, to, type, neuron) {
     // No error handling as error handing is handled in Innovation.newInnovation
     
     /*
@@ -10,11 +10,14 @@ class Innovation {
 
     this.from = from;
     this.to = to;
+    this.neuron = neuron;
     this.type = type;
-    this.id = Innovation.counter++;
+    this.id = Innovation.id++;
   }
 
   static table = new Map();
+  static neurons = [ 0 ]
+  static id = 0;
   
   static newInnovation(arr) {
     if(typeof arr[0] !== 'number') {
@@ -29,14 +32,14 @@ class Innovation {
       throw new Error(`newInnovation type is not neuron or connector. Value: ${arr[2]} Innovation: ${arr}`);
     }
 
-    if(typeof Innovation.table.get(Innovation.toCon(arr)) !== 'undefined') {
+    if(typeof Innovation.table.get(Innovation.con(arr)) !== 'undefined') {
       throw new Error(`Cannot add innovation to table thats already added. Innovation: ${Innovation.toCon(arr)}`)
     }
 
     let newNeuronId = null;
 
     if(arr[2] === 'neuron') {
-      newNeuronId = Innovation.getNeuron();
+      newNeuronId = Innovation.getNewNeuron();
       Innovation.addNeuron(newNeuronId);
 
       const connectorOne = [arr[0], newNeuronId, 'connector'];
@@ -46,12 +49,14 @@ class Innovation {
       Innovation.newInnovation(connectorTwo);
     }
 
-    const innovation = new Innovation(arr[0], arr[1], newNeuronId);
+    const innovation = new Innovation(arr[0], arr[1], arr[2], newNeuronId);
     
-    Innovation.table.set(Innovation.toCon([arr[0], arr[1], newNeuronId]), innovation);
+    Innovation.table.set(Innovation.con(arr), innovation);
+    //Innovation.table.set(Innovation.con([arr[0], arr[1], newNeuronId]), innovation);
     Innovation.table.set(innovation.id, innovation);
 
     const keyArray = Array.from(Innovation.table.keys());
+
     if(keyArray.length !== [... new Set(keyArray)].length) {
       throw new Error(`Duplicate innovation detected`);
     }
@@ -65,24 +70,17 @@ class Innovation {
     Innovation.neurons.push(id);
   }
 
-  static getNeuron() {
+  static getNewNeuron() {
     return Innovation.neurons[Innovation.neurons.length - 1] + 1;
   }
 
-  static toCon(arr) {
-    let arr2 = arr[2];
-
-    if(arr2 === 'connector') {
-      arr2 = null;
-    } else if (typeof arr2 !== 'number' && arr2 !== null) {
-      throw new Error(`arr[2] passed to toCon is not any valid input. arr[2]: ${arr2}`)
-    }
-
-    return `${arr[0]}->${arr[1]}:${arr2}`;
+  static getNeuron() {
+    return Innovation.neurons[Innovation.neurons.length - 1];
   }
 
-  static neurons = [ 0 ];
-  static counter = 0;
+  static con(arr) {
+    return `${arr[0]}:${arr[1]}:${arr[2]}`
+  }
 }
 
 module.exports = { Innovation }

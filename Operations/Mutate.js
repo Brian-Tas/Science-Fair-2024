@@ -53,13 +53,13 @@ const mutate = (network, mutationChance = null) => {
         }
     }
 
+    console.log(possibleConnections);
     // Get array of new connections
     let newConnectors = [];
 
     for(let i = 0; i < possibleConnections.length; i++) 
     {
-        if(Math.random() < settings.mutation.odds.newConnection) 
-        {
+        if(Math.random() < settings.mutation.odds.newConnection) {
             newConnectors.push(
                 possibleConnections[i]
             );
@@ -69,11 +69,12 @@ const mutate = (network, mutationChance = null) => {
     // Add them
     for(let i = 0; i < newConnectors.length; i++) {
         const rawInnovation = [...newConnectors[i], 'connector'];
-        let innovation = Innovation.table.get(Innovation.toCon(rawInnovation));
+        debugger;
+        let innovation = Innovation.table.get(Innovation.con(rawInnovation));
         
         if(typeof innovation === 'undefined') {
             Innovation.newInnovation(rawInnovation);
-            innovation = Innovation.table.get(Innovation.toCon([rawInnovation[0], rawInnovation[1], null]));
+            innovation = Innovation.table.get(Innovation.con(rawInnovation));
         }
 
 
@@ -87,9 +88,17 @@ const mutate = (network, mutationChance = null) => {
     let newNeurons = []
 
     for(let i = 0; i < network.connectors.get("length"); i++) {
-
+        if(Math.random() < settings.mutation.odds.newNeuron) {
+            const connector = network.connectors.get(i)
+            newNeurons.push(
+                [connector.from, connector.to]
+            );
+        }
     }
-    // Add them
+
+    for(let i = 0; i < newNeurons.length; i++) {
+        
+    }
     // Call update
     // Get array of connections for weight change
     // Update them

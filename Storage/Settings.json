@@ -1,6 +1,6 @@
 {
   "startingInnovationTable": [
-      [0, 3, "connector"], [1, 2, "connector"], [3, 4, "connector"],
+      [0, 3, "connector"], [1, 6, "connector"], [3, 4, "connector"],
       [4, 5, "connector"], [5, 6, "connector"]
   ],
 
@@ -15,9 +15,9 @@
     "maxWeightAffect": 0.5,
     "newConnectionWeightRange": [-0.5, 0.5],
     "odds": {
-      "newNeuron": 0.05,
+      "newNeuron": 0.025,
       "newConnection": 0.0195,
-      "weightChange": 0.06
+      "weightChange": 0.08
     }
   }
 }
