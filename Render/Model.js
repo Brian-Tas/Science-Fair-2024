@@ -46,6 +46,7 @@ class Model {
     let neurons = new Map();
     let neuronPostions = []
     let lanes = new Map();
+    let allNeurons = [...this.network.neurons.get('all')];
 
     for(let i = 0; i < this.network.layers.length; i++) {
       for(let j = 0; j < this.network.layers[i].length; j++) {
@@ -55,12 +56,22 @@ class Model {
         lanes.set(lane, this.network.layers[i][j]);
 
         neurons.set(this.network.layers[i][j], [this.getX(i) + 1, this.getY(lane) + 1]);
+        allNeurons.splice(allNeurons.indexOf(this.network.layers[i][j]), 1);
       }
+    }
+    
+    for(let i = 0; i < allNeurons.length; i++) {
+      neurons.set(allNeurons[i], this.getX(this.network.layers.length), this.getY(this.getLane()))
     }
 
     for(let i = 0; i < this.network.connectors.get("length"); i++) {
-      const connector = this.network.connectors.get(i);
-      line(neurons.get(connector.from), neurons.get(connector.to), this.ctx)
+      const connector = this.network.connectors.get(i)
+
+      try {
+        line(neurons.get(connector.from), neurons.get(connector.to), this.ctx);
+      } catch (error) {
+        console.warn("Neurons are cut off at render");
+      }
     }
 
     neuronPostions.forEach(postion => {
