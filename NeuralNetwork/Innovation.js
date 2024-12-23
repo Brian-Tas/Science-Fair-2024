@@ -81,6 +81,17 @@ class Innovation {
   static con(arr) {
     return `${arr[0]}:${arr[1]}:${arr[2]}`
   }
+
+  static ensure(arr) {
+    let innovation = Innovation.table.get(Innovation.con(arr));
+
+    if(typeof innovation === 'undefined') {
+      Innovation.newInnovation(arr);
+      innovation = Innovation.table.get(Innovation.con(arr));
+    }
+
+    return innovation;
+  }
 }
 
 module.exports = { Innovation }

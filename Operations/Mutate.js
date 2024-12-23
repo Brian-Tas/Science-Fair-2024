@@ -3,6 +3,28 @@ const settings = require("../Storage/Settings.json");
 const { Innovation } = require("../NeuralNetwork/Innovation");
 
 const mutate = (network, mutationChance = null) => {
+    // Get array of new neurons
+    let newNeurons = []
+    
+    for(let i = 0; i < network.connectors.get("length"); i++) {
+        if(Math.random() < settings.mutation.odds.newNeuron) {
+            const connector = network.connectors.get(i);
+            newNeurons.push(
+                [connector.from, connector.to]
+            );
+        }
+    }
+    
+    for(let i = 0; i < newNeurons.length; i++) {
+        const innovation = Innovation.ensure([...newNeurons[i], 'neuron']);
+
+        if(innovation === 'undefined') {
+            throw new Error(`Innovation.check has failed at newNeuron mutation`)
+        }
+    
+        network.addNeuron(innovation.id);
+    }
+
     // Array for storing all the possible connections between all nodes
     let possibleConnections = [];
 
@@ -53,12 +75,10 @@ const mutate = (network, mutationChance = null) => {
         }
     }
 
-    console.log(possibleConnections);
     // Get array of new connections
     let newConnectors = [];
 
-    for(let i = 0; i < possibleConnections.length; i++) 
-    {
+    for(let i = 0; i < possibleConnections.length; i++) {
         if(Math.random() < settings.mutation.odds.newConnection) {
             newConnectors.push(
                 possibleConnections[i]
@@ -68,15 +88,11 @@ const mutate = (network, mutationChance = null) => {
 
     // Add them
     for(let i = 0; i < newConnectors.length; i++) {
-        const rawInnovation = [...newConnectors[i], 'connector'];
-        debugger;
-        let innovation = Innovation.table.get(Innovation.con(rawInnovation));
-        
-        if(typeof innovation === 'undefined') {
-            Innovation.newInnovation(rawInnovation);
-            innovation = Innovation.table.get(Innovation.con(rawInnovation));
-        }
+        let innovation = Innovation.ensure([...newConnectors[i], 'connector']);
 
+        if(typeof innovation === 'undefined') {
+            throw new Error(`Innvatiom.ensure has failed at newConnector mutation`);
+        }
 
         const [min, max] = settings.mutation.newConnectionWeightRange;
         const newWeight = Math.random() * (max - min) + min;
@@ -84,21 +100,6 @@ const mutate = (network, mutationChance = null) => {
         network.flipConnector(innovation.id, newWeight);
     }
 
-    // Get array of new neurons
-    let newNeurons = []
-
-    for(let i = 0; i < network.connectors.get("length"); i++) {
-        if(Math.random() < settings.mutation.odds.newNeuron) {
-            const connector = network.connectors.get(i)
-            newNeurons.push(
-                [connector.from, connector.to]
-            );
-        }
-    }
-
-    for(let i = 0; i < newNeurons.length; i++) {
-        
-    }
     // Call update
     // Get array of connections for weight change
     // Update them

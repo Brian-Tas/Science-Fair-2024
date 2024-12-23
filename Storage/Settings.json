@@ -15,8 +15,8 @@
     "maxWeightAffect": 0.5,
     "newConnectionWeightRange": [-0.5, 0.5],
     "odds": {
-      "newNeuron": 0.025,
-      "newConnection": 0.0195,
+      "newNeuron": 0.015,
+      "newConnection": 0.0125,
       "weightChange": 0.08
     }
   }

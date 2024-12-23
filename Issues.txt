@@ -1,0 +1,11 @@
+- When a new neuron is added, if there was already a new neuron between those neurons, it is ignored. Example-
+
+2
+[]
+||\
+||[]3
+||/
+[]
+1
+
+if 1 -> 2 is chosen for a new neuron, it wont work, as 1:2:neuron already exists in the form of 1:2:3.

@@ -16,8 +16,10 @@ const tanh = n => {
 
 class NeuralNetwork {
   constructor(genome, activationFunctions=["tanh", "tanh"]) {
-    this.genome = genome;
+    this.genome = genome
     this.activationFunctions = activationFunctions;
+
+    this.genome.innovs[0].sort((a,b)=>a-b)
 
     if(this.genome.innovs[0].length !== [...new Set(this.genome.innovs[0])].length) {
       throw new Error(`Duplicate Innovs detected. Innovs: ${this.genome.innovs[0]}`)
@@ -61,35 +63,46 @@ class NeuralNetwork {
 
     // Create connector map
     let connectorCounter = 0;
-
     for(let i = 0; i < this.genome.innovs[0].length; i++) {
       const innovation = Innovation.table.get(this.genome.innovs[0][i]);
+      
+      if(typeof innovation === 'undefined') {
+        console.table(Innovation.table)
+        throw new Error(`Innovation is not defined at newConnector. Genome: ${this.genome.innovs[0]} InnovationTable above`)
+      }
+      
+      if(innovation.type === 'connector') {  
+        const connector = new Connector(
+          innovation,
+          this.genome.innovs[1][i]
+        );
+  
+        this.connectors.set(
+          connectorCounter,
+          connector
+        );
+  
+        this.connectors.set(
+          Innovation.con([innovation.from, innovation.to, innovation.type]),
+          connector
+        )
 
-      if(innovation.type === 'neuron') {
-        continue;
+        
+        this.neurons.get(innovation.from).from.push(connectorCounter);
+        this.neurons.get(innovation.to).to.push(connectorCounter);
+        connectorCounter++;
       }
 
-      const connector = new Connector(
-        innovation,
-        this.genome.innovs[1][i]
-      );
-
-      this.connectors.set(
-        connectorCounter,
-        connector
-      );
-
-      this.connectors.set(
-        Innovation.con([innovation.from, innovation.to, innovation.type]),
-        connector
-      )
-
-      this.neurons.get(innovation.from).from.push(connectorCounter);
-      this.neurons.get(innovation.to).to.push(connectorCounter);
-      connectorCounter++;
     }
 
     this.connectors.set('length', connectorCounter);
+    
+    let connectorIdArray = [];
+    const connectorValues = Array.from(this.connectors.values());
+
+    for(let i = 0; i < (connectorValues.length - 1) / 2; i++) {
+      connectorIdArray.push(connectorValues[i*2+1].id);
+    }
 
     // Construct feed-forward 
     
@@ -253,39 +266,56 @@ class NeuralNetwork {
   }
 
   addNeuron(innovId) {
-    const innovation = Innovation.table.get(innovId);
+    if(!this.genome.innovs[0].includes(innovId)) {
+      const innovation = Innovation.table.get(innovId);
+      
+      if(typeof innovation === 'undefined') {
+        throw new Error(`Passed Innovation to ".addNeuron" is not found. Id: ${innovId}`);
+      }
+  
+      if(innovation.type !== 'neuron') {
+        throw new Error(`Passed Innovation to ".addNeuron" is not a neuron innovation. Id:  ${innovId} Innovation type (should be neuron): ${innovation.type}`);
+      }
+  
+      if(this.genome.innovs[0].includes(innovId)) {
+        throw new Error(`Passed Innovation to ".addNeuron" is already included in genome. Id: ${innovId} Genome: ${this.genome.innovs[0]}`);
+      }
+  
+      const connector1 = Innovation.table.get(Innovation.con([innovation.from, innovation.neuron, 'connector']));
+      const connector2 = Innovation.table.get(Innovation.con([innovation.neuron, innovation.to, 'connector']));
+      
+      if(typeof connector1 === 'undefined') {
+        throw new Error(`From connector is undefined at "addNeuron". This shouldnt be possible, as checks already ensured that the neuron innovation exists, so this error means that adding a newNeuron to the innov table failed somehow.`);
+      }
+      
+      if(typeof connector2 === 'undefined') {
+        throw new Error(`To connector is undefined at "addNeuron". This shouldnt be possible, as checks already ensured that the neuron innovation exists, so this error means that adding a newNeuron to the innov table failed somehow.`);
+      }
+  
+      const oldConnector = this.connectors.get(Innovation.con([innovation.from, innovation.to, 'connector']));
+  
+      if(typeof oldConnector === 'undefined') {
+        throw new Error(`The connector trying to be replaced at addNeuron does not exist in this neural network. Connectors: ${Array.from(this.connectors.keys())} Connector: ${Innovation.con([innovation.from, innovation.to, null])}`);
+      }
 
-    if(typeof innovation === 'undefined') {
-      throw new Error(`Passed Innovation to ".addNeuron" is not found. Id: ${innovId}`);
+      try {
+        this.removeInnov(oldConnector.id);
+      } catch(err) {
+        console.table(Innovation.table);
+        console.table(Array.from(this.connectors.values()));
+        console.table(this.genome);
+        this.render();
+        throw new Error(err);
+      }
+      this.addInnov(innovation.id, null);
+      this.addInnov(connector1.id, oldConnector.weight);
+      this.addInnov(connector2.id, 1);
+  
+      this.genome.neurons[1].push(innovation.neuron);
+  
+      this.update();
     }
 
-    if(innovation.type !== 'neuron') {
-      throw new Error(`Passed Innovation to ".addNeuron" is not a neuron innovation. Id:  ${innovId} Innovation type (should be neuron): ${innovation.type}`);
-    }
-
-    const connector1 = Innovation.table.get(Innovation.con([innovation.from, innovation.type, 'connector']));
-    const connector2 = Innovation.table.get(Innovation.con([innovation.type, innovation.to, 'connector']));
-
-    if(typeof connector1 === 'undefined') {
-      throw new Error(`From connector is undefined at "addNeuron". This shouldnt be possible, as checks already ensured that the neuron innovation exists, so this error means that adding a newNeuron to the innov table failed somehow.`);
-    }
-
-    if(typeof connector2 === 'undefined') {
-      throw new Error(`To connector is undefined at "addNeuron". This shouldnt be possible, as checks already ensured that the neuron innovation exists, so this error means that adding a newNeuron to the innov table failed somehow.`);
-    }
-
-    const oldConnector = this.connectors.get(Innovation.con([innovation.from, innovation.to, 'connector']));
-
-    if(typeof oldConnector === 'undefined') {
-      throw new Error(`The connector trying to be replaced at addNeuron does not exist in this neural network. Connector: ${Innovation.toCon([innovation.from, innovation.to, null])}`);
-    }
-
-    this.removeInnov(oldConnector.id);
-    this.addInnov(innovation.id, null);
-    this.addInnov(connector1.id, oldConnector.weight);
-    this.addInnov(connector2, 1);
-
-    this.update();
   }
 
   removeInnov(id) {
@@ -297,11 +327,20 @@ class NeuralNetwork {
 
     this.genome.innovs[0].splice(index, 1);
     this.genome.innovs[1].splice(index, 1);
+
   }
 
   addInnov(id, weight) {
     if(this.genome.innovs[0].includes(id)) {
       throw new Error(`Genome already includes innov at addInnov. id: ${id} Genome: ${this.genome.innovs[0]}`)
+    }
+
+    if(typeof id !== 'number') {
+      throw new Error(`new Innov id is not a number. Id: ${id}`);
+    }
+
+    if(typeof weight !== 'number' && weight !== null) {
+      throw new Error(`Weight is not a number or null. Weight: ${weight}`)
     }
 
     this.genome.innovs[0].push(id);
