@@ -347,6 +347,17 @@ class NeuralNetwork {
     this.genome.innovs[1].push(weight);
   }
 
+  changeWeight(index, shift) { // Index of innovation's weight whos being changed and how much its being changed by
+    const connector = this.connectors.get(index);
+
+    if(typeof connector === 'undefined') {
+      throw new Error(`Invalid index passed to .changeWeight. Index: ${index} Genome: ${this.genome.innovs[0]}`);
+    }
+
+    connector.weight += shift;
+    this.genome.innovs[1][index] += shift;
+  }
+
   update(genome = this.genome) {
     const newNetwork = new NeuralNetwork(this.genome);
 

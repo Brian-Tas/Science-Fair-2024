@@ -10,50 +10,73 @@ const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
 
 class Population {
     constructor(path, size, gate) {
-        this.size = size;
-        this.gate = Population.gates.get(gate);
-
-        const JSONgenome = require(`./Storage/Networks/${path}.json`);
-        this.genomes = Array(size).fill(JSONgenome);
-
-        // Error handling in the case args arent the correct datatype
-        if(typeof path !== 'string') {
-            throw new Error(`Path is not a string. Path: ${path} Type: ${typeof path}`)
+        try {
+            this.defaultGenome = require(`./Storage/Networks/${path}.json`);
+        } catch(err) {
+            throw new Error(`Invalid path at Population. Path (cant end with .json or /): ${path}`);
         }
+
+        this.size = size;
 
         if(typeof this.size !== 'number') {
-            throw new Error(`Population size isn't a number. Size: ${this.size} Type: ${typeof this.size}`)
+            throw new Error(`Size passed to Population is not a number. Size: ${this.size}`);
         }
 
-        if(typeof this.gate !== 'function') {
-            throw new Error(`Passed gate is not a valid gate. Gate: ${this.gate} \nValid Gates: ${Array.from(Population.gates.keys())}`);
+        this.gate = Population.gates.get(gate);
+        
+        if(typeof this.gate === 'undefined') {
+            throw new Error(`Pass through a valid gate to Population. Gate: ${gate}`);
         }
 
-        this.networks = []; // Is updated with .network() from the genome array
-        this.updateNetworks();
+
+        this.genomes = [];
+
+        for(let i = 0; i < this.size; i++) {
+            this.genomes.push(this.defaultGenome);
+        }
+
+        this.networks = new Array(this.size);
+    }
+
+    check(index) {
+        if(JSON.stringify(this.genomes[index]) !== JSON.stringify(this.networks[index].genome)) {
+            throw new Error(`Check failed at population. Genome at i: ${this.genomes[index]} Network Genome at i: ${this.networks[index].genome}`);
+        }
+    }
+
+    checkAll() {
+        if(this.size !== this.networks.length) {
+            throw new Error(`Networks array and this.size are desynced at population. Size: ${this.size} networks length: ${this.networks.length}`);
+        }
+
+        for(let i = 0; i < this.size; i++) {
+            this.check(i);
+        }
     }
 
     updateNetworks() {
-        for(let i = 0; i < this.genomes.length; i++) {
-            this.networks.push(
-                new NeuralNetwork(this.genomes[i])
-            );
-        }
-    }
+        this.networks = [];
 
-    mutate(id) {
-        const network = this.networks[id];
-
-        if(typeof network === undefined) {
-            throw new Error(`Network with id of ${id} does not exist. Cannot mutate`);
+        for(let i = 0; i < this.size; i++) {
+            this.updateNetwork(i);
         }
 
-        mutate(network);
-        this.genomes[id] = network.genome;
+        this.checkAll();
     }
 
-    model(id) {
-        this.networks[id].render();
+    updateNetwork(index) {
+        if((index > this.size - 1) || (index < 0)) {
+            throw new Error(`Invalid index at updateNetwork. Index: ${index} Size: ${index}`);
+        }
+
+        this.networks[index] = new NeuralNetwork(this.genomes[index]);
+        this.check(index);
+    }
+
+    run(index, inputs) {
+        this.updateNetwork(index);
+
+        return this.networks[index].run(...inputs);
     }
 
     static gates = new Map([

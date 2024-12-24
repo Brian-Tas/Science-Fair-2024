@@ -1,4 +1,3 @@
-const { networkInterfaces } = require("os");
 const settings = require("../Storage/Settings.json");
 const { Innovation } = require("../NeuralNetwork/Innovation");
 
@@ -100,10 +99,22 @@ const mutate = (network, mutationChance = null) => {
         network.flipConnector(innovation.id, newWeight);
     }
 
-    // Call update
     // Get array of connections for weight change
-    // Update them
-    // Call update
+    let weightChangedIndices = [];
+
+    for(let i = 0; i < network.connectors.get("length"); i++) {
+        if(Math.random() < settings.mutation.odds.weightChange) {
+            weightChangedIndices.push(i);
+        }
+    }
+
+    // Add them
+    for(let i = 0; i < weightChangedIndices.length; i++) {
+        const [min, max] = settings.mutation.weightChangeRange;
+        const shift = Math.random() * (max - min) + min;
+
+        network.changeWeight(weightChangedIndices[i], shift);
+    }
 }
 
 module.exports = { mutate }

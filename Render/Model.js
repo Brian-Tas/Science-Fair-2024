@@ -1,5 +1,4 @@
 var pngStringify = require('console-png');
-const { verify } = require('crypto');
 const { createCanvas } = require('@napi-rs/canvas');
 const fs = require('fs');
 const seedrandom = require('seedrandom');
