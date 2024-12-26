@@ -32,10 +32,40 @@ class Population {
         this.genomes = [];
 
         for(let i = 0; i < this.size; i++) {
-            this.genomes.push(this.defaultGenome);
+            this.genomes.push({
+                neurons: [...this.defaultGenome.neurons],
+                innovs: [[...this.defaultGenome.innovs[0]], [...this.defaultGenome.innovs[1]]]
+            });
         }
 
+        // Genome 1 and Genome 2
+        this.genomes[1].innovs = [[7, 2, 1, 5], [0.5, -0.2, 0.1, 0.8] ]
+        this.genomes[2].innovs = [[7, 1, 5, 2, 9], [0.5, 0.1, 0.8, -0.3, 0.9] ]
+        console.log(this.compare(1, 2)); // Similarity score: 1.4
+        
+        
+        this.genomes[1].innovs = [[1, 2, 3], [0.2, -0.1, 0.6] ]
+        this.genomes[2].innovs = [[2, 3, 4], [0.3, -0.2, 0.7] ]
+        console.log(this.compare(1, 2)); // Similarity score: 0.9
+        
+        
+        this.genomes[1].innovs = [[4, 3, 8, 10], [0.9, 0.5, -0.2, 0.1] ]
+        this.genomes[2].innovs = [[4, 5, 6], [0.9, 0.7, -0.4] ]
+        console.log(this.compare(1, 2)); // Similarity score: 0.8
+        
+        
+        this.genomes[1].innovs = [[3, 6, 2], [-0.3, 0.1, 0.4] ]
+        this.genomes[2].innovs = [[1, 6, 2, 4], [-0.3, 0.2, 0.5, 0.7] ]
+        console.log(this.compare(1, 2)); // Similarity score: 1.0
+        
+        
+        this.genomes[1].innovs = [[5, 7, 8], [0.1, 0.9, -0.8] ]
+        this.genomes[2].innovs = [[5, 6, 9], [0.2, 0.6, 0.7] ]
+        console.log(this.compare(1, 2)); // Similarity score: 1.2
+
         this.networks = new Array(this.size);
+        
+        this.species = Array.from({length: this.size}, (_, index) => index);
     }
 
     check(index) {
@@ -77,6 +107,92 @@ class Population {
         this.updateNetwork(index);
 
         return this.networks[index].run(...inputs);
+    }
+
+    compare(i1, i2) {
+        const genome1 = [[...this.genomes[i1].innovs[0]], [...this.genomes[i1].innovs[1]]];
+        const genome2 = [[...this.genomes[i2].innovs[0]], [...this.genomes[i2].innovs[1]]];
+
+        const length1 = genome1[0].length;
+        const length2 = genome2[0].length;
+        
+        const minLength = Math.min(length1, length2);
+        
+        let matching = [];
+        let disjoint = 0;
+        let excess = 0;
+        
+        const marked1 = new Array(length1).fill(false);
+        const marked2 = new Array(length2).fill(false);
+
+        // Calculate matching
+        for(let i = 0; i < minLength; i++) {
+            if(marked1[i] || marked2[i]) {
+                continue;
+            }
+
+            if(genome1[0][i] === genome2[0][i]) {
+                matching.push(i);
+                marked1[i] = true;
+                marked2[i] = true;
+            }
+        }
+
+        // Calculate disjoint
+        for(let i = 0; i < length1; i++) {
+            if(marked1[i]) {
+                continue;
+            }
+
+            for(let j = 0; j < length2; j++) {
+                if(marked2[j]) {
+                    continue;
+                }
+
+                if(genome1[0][i] === genome2[0][j]) {
+                    disjoint++;
+                    marked1[i] = true;
+                    marked2[j] = true;
+                }
+            }
+        }
+
+        // Calculate excess
+        for(let i = 0; i < length1; i++) {
+            if(marked1[i]) {
+                continue;
+            }
+
+            excess++;
+        }
+
+        for(let i = 0; i < length2; i++) {
+            if(marked2[i]) {
+                continue;
+            }
+
+            excess++;
+        }
+
+        let average = 0;
+
+        if(matching.length > 0) {
+            for(let i = 0; i < matching.length; i++) {
+                average += Math.abs(genome1[1][matching[i]] - genome2[1][matching[i]]);
+            }
+
+            average /= matching.length;
+        }
+
+
+        const [c1, c2, c3] = Object.values(settings.compare);
+
+        let similarity = 0;
+
+        similarity = ((c1 * excess) + (c2 * disjoint)) / (length1 + length2) + (c3 * average)
+
+
+        return similarity;
     }
 
     static gates = new Map([

@@ -19,8 +19,6 @@ class NeuralNetwork {
     this.genome = genome
     this.activationFunctions = activationFunctions;
 
-    this.genome.innovs[0].sort((a,b)=>a-b)
-
     if(this.genome.innovs[0].length !== [...new Set(this.genome.innovs[0])].length) {
       throw new Error(`Duplicate Innovs detected. Innovs: ${this.genome.innovs[0]}`)
     }

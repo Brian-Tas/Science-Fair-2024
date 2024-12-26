@@ -20,5 +20,11 @@
       "newConnection": 0.0125,
       "weightChange": 0.08
     }
+  },
+
+  "compare": {
+    "c1": 1,
+    "c2": 1,
+    "c3": 1
   }
 }
