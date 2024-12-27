@@ -181,6 +181,12 @@ class Population {
     }
 
     render(index) {
+        try {
+            this.check(index);
+        } catch (err) {
+            this.updateNetwork(index);
+        }
+        
         this.networks[index].render();
     }
 
