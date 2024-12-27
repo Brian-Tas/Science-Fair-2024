@@ -68,9 +68,7 @@ class Model {
 
       try {
         line(neurons.get(connector.from), neurons.get(connector.to), this.ctx);
-      } catch (error) {
-        console.warn("Neurons are cut off at render");
-      }
+      } catch (error) {}
     }
 
     neuronPostions.forEach(postion => {

@@ -38,31 +38,6 @@ class Population {
             });
         }
 
-        // Genome 1 and Genome 2
-        this.genomes[1].innovs = [[7, 2, 1, 5], [0.5, -0.2, 0.1, 0.8] ]
-        this.genomes[2].innovs = [[7, 1, 5, 2, 9], [0.5, 0.1, 0.8, -0.3, 0.9] ]
-        console.log(this.compare(1, 2)); // Similarity score: 1.4
-        
-        
-        this.genomes[1].innovs = [[1, 2, 3], [0.2, -0.1, 0.6] ]
-        this.genomes[2].innovs = [[2, 3, 4], [0.3, -0.2, 0.7] ]
-        console.log(this.compare(1, 2)); // Similarity score: 0.9
-        
-        
-        this.genomes[1].innovs = [[4, 3, 8, 10], [0.9, 0.5, -0.2, 0.1] ]
-        this.genomes[2].innovs = [[4, 5, 6], [0.9, 0.7, -0.4] ]
-        console.log(this.compare(1, 2)); // Similarity score: 0.8
-        
-        
-        this.genomes[1].innovs = [[3, 6, 2], [-0.3, 0.1, 0.4] ]
-        this.genomes[2].innovs = [[1, 6, 2, 4], [-0.3, 0.2, 0.5, 0.7] ]
-        console.log(this.compare(1, 2)); // Similarity score: 1.0
-        
-        
-        this.genomes[1].innovs = [[5, 7, 8], [0.1, 0.9, -0.8] ]
-        this.genomes[2].innovs = [[5, 6, 9], [0.2, 0.6, 0.7] ]
-        console.log(this.compare(1, 2)); // Similarity score: 1.2
-
         this.networks = new Array(this.size);
         
         this.species = Array.from({length: this.size}, (_, index) => index);
@@ -193,6 +168,20 @@ class Population {
 
 
         return similarity;
+    }
+
+    mutate(index) {
+        this.updateNetwork(index);
+        
+        mutate(this.networks[index]);
+
+        this.genomes[index] = this.networks[index].genome;
+
+        this.check(index);
+    }
+
+    render(index) {
+        this.networks[index].render();
     }
 
     static gates = new Map([

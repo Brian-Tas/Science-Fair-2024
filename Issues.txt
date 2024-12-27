@@ -8,4 +8,19 @@
 []
 1
 
-if 1 -> 2 is chosen for a new neuron, it wont work, as 1:2:neuron already exists in the form of 1:2:3.
+if 1 -> 2 is chosen for a new neuron, it wont work, as 1:2:neuron already exists in the form of 1:2:3. 12/27/24
+
+- Layers dont work if the network is split
+- Thats why some networks are split and never get back together!
+- potentially, we could calulate layers under the assumption that all neurons are connected
+- The issue is that we need to know the layers to get all connections.
+- We could just make it so that all inputs connect to all hiddens and outputs, with all hiddens connecting
+to all outputs?
+- We could remake layering to use the reverse method as before
+- No that wouldnt work.
+- Actually if we combine that with the connections we already have, that might work
+- ACTUAL SOLUTION - Just add all neurons (-inputs) that have 0 from connections to the currentLayer at
+initialzation - This is sort of what i thought of which is exciting!
+
+
+- Potential issue - output neurons could potentially be under a hidden, meaning outputs could connected to hiddens

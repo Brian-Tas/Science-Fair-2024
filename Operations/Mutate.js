@@ -115,6 +115,8 @@ const mutate = (network, mutationChance = null) => {
 
         network.changeWeight(weightChangedIndices[i], shift);
     }
+
+    console.log([newConnectors, weightChangedIndices, newNeurons]);
 }
 
 module.exports = { mutate }

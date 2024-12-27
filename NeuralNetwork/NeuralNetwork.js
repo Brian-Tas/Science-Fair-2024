@@ -108,6 +108,13 @@ class NeuralNetwork {
 
     let currentNeuronLevel = [...this.neurons.get("sensors"), 0];
 
+    for(let i = 0; i < this.neurons.get("length") - this.neurons.get("sensors").length; i++) {
+      const neuron = this.neurons.get(i);
+      if(neuron.from.length === 0) {
+        currentNeuronLevel.push(neuron.id);
+      }
+    }
+
     let fired = [];
 
     for(let k = 0; k < this.neurons.get("length"); k++) {
