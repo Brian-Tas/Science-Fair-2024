@@ -111,7 +111,7 @@ class NeuralNetwork {
     for(let i = 0; i < this.genome.neurons[1].length; i++) {
       const neuron = this.neurons.get(this.genome.neurons[1][i]);
 
-      if(neuron.from.length === 0) {
+      if(neuron.to.length === 0) {
         currentNeuronLevel.push(neuron.id);
       }
     }

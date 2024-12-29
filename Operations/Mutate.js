@@ -64,10 +64,22 @@ const mutate = (network, mutationChance = null) => {
         {
             for(let q = i + 1; q < network.layers.length; q++) 
             {
+                pushLoop:
                 for(let g = 0; g < network.layers[q].length; g++) {
+                    const from = network.layers[i][h];
+                    const to = network.layers[q][g];
+
+                    const outputs = network.neurons.get("outputs");
+
+                    for(let z = 0; z < outputs.length; z++) {
+                        if(from === outputs[z]) {
+                            continue pushLoop;
+                        }
+                    } 
+
                     possibleConnections.push([
-                        network.layers[i][h],
-                        network.layers[q][g]
+                        from,
+                        to
                     ]);
                 }
             }
@@ -115,8 +127,6 @@ const mutate = (network, mutationChance = null) => {
 
         network.changeWeight(weightChangedIndices[i], shift);
     }
-
-    console.log([newConnectors, weightChangedIndices, newNeurons]);
 }
 
 module.exports = { mutate }

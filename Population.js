@@ -1,6 +1,7 @@
 const settings = require("./Storage/Settings.json");
-const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 const { mutate } = require("./Operations/Mutate");
+const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
+
 
 // Import innovation
 const { Innovation } = require("./NeuralNetwork/Innovation");
@@ -188,6 +189,10 @@ class Population {
         }
         
         this.networks[index].render();
+    }
+
+    evolve() {
+        // Sort genomes into species
     }
 
     static gates = new Map([
