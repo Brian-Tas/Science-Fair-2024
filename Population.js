@@ -22,6 +22,10 @@ class Species {
     static checkSpeciesCount(pop) {
         return Math.max(Math.floor(4 * Math.log(0.4 * pop + 1)), 1);
     }
+
+    static threshold = settings.speciation.threshhold;
+    static target = settings.speciation.targetSpecies;
+    static missRefactor = settings.speciation.missRefactorConst;
 }
 
 class Population {
@@ -49,7 +53,7 @@ class Population {
 
         for(let i = 0; i < this.size; i++) {
             this.genomes.push({
-                neurons: [...this.defaultGenome.neurons],
+                neurons: [[...this.defaultGenome.neurons[0]], [...this.defaultGenome.neurons[1]], [...this.defaultGenome.neurons[2]]],
                 innovs: [[...this.defaultGenome.innovs[0]], [...this.defaultGenome.innovs[1]]]
             });
         }
@@ -58,11 +62,6 @@ class Population {
         
         this.species = [Array.from({length: this.size}, (_, index) => index)];
 
-        for(let i = 0; i < this.size; i++) {
-            for(let j = 0; j < 3; j++) {
-                this.mutate(i);
-            }
-        }
         this.speciate();
     }
 
@@ -214,7 +213,11 @@ class Population {
     }
 
     speciate() {
+        this.species = [];
+
         for(let i = 0; i < this.size; i++) {
+            const avgComparasins = [];
+
             for(let j = 0; j < this.species.length; j++) {
                 const speciesCheckCount = Species.checkSpeciesCount(this.species[j].length);
                 const tempSpecies = [...this.species[j]];
@@ -234,9 +237,26 @@ class Population {
 
                 const avgCompare = avg(comparasins);
 
-                console.log(avgCompare);
+                avgComparasins.push(avgCompare);
+            }
+
+            const min = Math.min(...avgComparasins);
+
+            if(min <= Species.threshold && min !== -Infinity) {
+                const speciesIndex = avgComparasins.indexOf(min);
+
+                if(speciesIndex === -1) {
+                    throw new Error(`Cannot find the min average comparasin in the avgComparasins array. min: ${min} AvgComparasins: ${avgComparasins}`)
+                }
+
+                this.species[speciesIndex].push(i);
+            } else {
+                this.species.push( [ i ] );
             }
         }
+
+        Species.threshold += 0.4 * Math.tanh((this.species.length - Species.target) * 0.1);
+        console.log(Species.threshold);
     }
 
     evolve() {
