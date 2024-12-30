@@ -17,12 +17,10 @@ settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
 */
 
 
-const population = new Population("Test21", 4, 'xor');
+const population = new Population("Test21", 150, 'xor');
 
-population.updateNetwork(1)
+console.log(population.species);
 
-for(let i = 0; i < 100; i++) {
-    population.mutate(1);
-    console.log(i)
+for(let i = 0; i < 150; i++) {
+    console.log(population.genomes[i]);
 }
-

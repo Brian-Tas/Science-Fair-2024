@@ -7,7 +7,22 @@ const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 const { Innovation } = require("./NeuralNetwork/Innovation");
 const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
 
+function avg(arr) {
+    let sum = 0;
+    const length = arr.length;
 
+    for(let i = 0; i < length; i++) {
+        sum += arr[i];
+    }
+
+    return sum / length;
+}
+
+class Species {
+    static checkSpeciesCount(pop) {
+        return Math.max(Math.floor(4 * Math.log(0.4 * pop + 1)), 1);
+    }
+}
 
 class Population {
     constructor(path, size, gate) {
@@ -41,7 +56,14 @@ class Population {
 
         this.networks = new Array(this.size);
         
-        this.species = Array.from({length: this.size}, (_, index) => index);
+        this.species = [Array.from({length: this.size}, (_, index) => index)];
+
+        for(let i = 0; i < this.size; i++) {
+            for(let j = 0; j < 3; j++) {
+                this.mutate(i);
+            }
+        }
+        this.speciate();
     }
 
     check(index) {
@@ -189,6 +211,32 @@ class Population {
         }
         
         this.networks[index].render();
+    }
+
+    speciate() {
+        for(let i = 0; i < this.size; i++) {
+            for(let j = 0; j < this.species.length; j++) {
+                const speciesCheckCount = Species.checkSpeciesCount(this.species[j].length);
+                const tempSpecies = [...this.species[j]];
+
+                const comparasins = [];
+
+                for(let i = 0; i < speciesCheckCount; i++) {
+                    const randomInt= Math.floor(Math.random() * tempSpecies.length);
+                    const chosenComparer = tempSpecies[randomInt];
+
+                    tempSpecies.splice(randomInt, 1);
+
+                    comparasins.push(
+                        this.compare(i, chosenComparer)
+                    );
+                }
+
+                const avgCompare = avg(comparasins);
+
+                console.log(avgCompare);
+            }
+        }
     }
 
     evolve() {
