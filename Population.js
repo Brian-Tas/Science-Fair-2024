@@ -18,6 +18,14 @@ function avg(arr) {
     return sum / length;
 }
 
+function spliceOf(value, arr) {
+    try {
+        arr.splice(arr.indexOf(value), 1);
+    } catch(err) {
+        console.error(err);
+    }
+}
+
 class Species {
     static checkSpeciesCount(pop) {
         return Math.max(Math.floor(4 * Math.log(0.4 * pop + 1)), 1);
@@ -186,7 +194,7 @@ class Population {
 
         let similarity = 0;
 
-        similarity = ((c1 * excess) + (c2 * disjoint)) / (length1 + length2) + (c3 * average)
+        similarity = ((c1 * excess) + (c2 * disjoint)) / (Math.max(length1, length2)) + (c3 * average)
 
 
         return similarity;
@@ -214,49 +222,41 @@ class Population {
 
     speciate() {
         this.species = [];
+        const marked = new Array(this.size).fill(false); // [false, false, false...]
 
-        for(let i = 0; i < this.size; i++) {
-            const avgComparasins = [];
-
-            for(let j = 0; j < this.species.length; j++) {
-                const speciesCheckCount = Species.checkSpeciesCount(this.species[j].length);
-                const tempSpecies = [...this.species[j]];
-
-                const comparasins = [];
-
-                for(let i = 0; i < speciesCheckCount; i++) {
-                    const randomInt= Math.floor(Math.random() * tempSpecies.length);
-                    const chosenComparer = tempSpecies[randomInt];
-
-                    tempSpecies.splice(randomInt, 1);
-
-                    comparasins.push(
-                        this.compare(i, chosenComparer)
-                    );
-                }
-
-                const avgCompare = avg(comparasins);
-
-                avgComparasins.push(avgCompare);
+        benchmarkLoop:
+        for(let h = 0 ; h < this.size; h++) {
+            if(marked[h]) {
+                continue benchmarkLoop;
             }
 
-            const min = Math.min(...avgComparasins);
+            this.species.push( [ h ] );
+            marked[h] = true;
 
-            if(min <= Species.threshold && min !== -Infinity) {
-                const speciesIndex = avgComparasins.indexOf(min);
-
-                if(speciesIndex === -1) {
-                    throw new Error(`Cannot find the min average comparasin in the avgComparasins array. min: ${min} AvgComparasins: ${avgComparasins}`)
+            compareLoop:
+            for(let i = 0; i < this.size; i++) {
+                if(marked[i]) {
+                    continue compareLoop;
                 }
 
-                this.species[speciesIndex].push(i);
-            } else {
-                this.species.push( [ i ] );
+                if(this.compare(h, i) < Species.threshold) {
+                    this.species[this.species.length - 1].push(i);
+                    marked[i] = true;
+                }
             }
         }
+    }
 
-        Species.threshold += 0.4 * Math.tanh((this.species.length - Species.target) * 0.1);
-        console.log(Species.threshold);
+    logSpecies() {
+        for(let i = 0; i < this.species.length; i++) {
+            const table = [];
+
+            for(let j = 0; j < this.species[i].length; j++) {
+                table.push(this.genomes[this.species[i][j]].innovs[0]);
+            }
+
+            console.table(table);
+        }
     }
 
     evolve() {

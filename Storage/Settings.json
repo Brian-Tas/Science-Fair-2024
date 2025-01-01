@@ -24,13 +24,13 @@
 
   "compare": {
     "c1": 1,
-    "c2": 1,
-    "c3": 1
+    "c2": 0.7,
+    "c3": 2.1
   },
 
   "speciation": {
     "targetSpecies": 5,
-    "threshhold": 0.25,
+    "threshhold": 0.6,
     "missRefactorConst": 0.1,
     "1comment": "If actual species is differant than target, actualSpecies - targetSpecies * missRefactorConst = threshhold change"
   }
