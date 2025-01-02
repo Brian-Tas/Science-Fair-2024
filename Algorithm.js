@@ -23,13 +23,5 @@ const population = new Population("Test21", size, 'xor');
 
 population.speciate();
 
-for(let i = 0; i < size; i++) {
-    for(let j = 0; j < 2; j++) {
-        population.mutate(i);
-    }
-}
-
-population.speciate();
-
 population.logSpecies();
 console.log(population.species);

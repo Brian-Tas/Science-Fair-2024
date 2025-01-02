@@ -69,6 +69,7 @@ class Population {
         this.networks = new Array(this.size);
         
         this.species = [Array.from({length: this.size}, (_, index) => index)];
+        this.speciesFitness = [];
 
         this.speciate();
     }
@@ -245,6 +246,10 @@ class Population {
                 }
             }
         }
+    }
+
+    getSpeciesFitness() {
+        
     }
 
     logSpecies() {

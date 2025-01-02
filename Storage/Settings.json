@@ -30,7 +30,7 @@
 
   "speciation": {
     "targetSpecies": 5,
-    "threshhold": 0.6,
+    "threshhold": 1,
     "missRefactorConst": 0.1,
     "1comment": "If actual species is differant than target, actualSpecies - targetSpecies * missRefactorConst = threshhold change"
   }
