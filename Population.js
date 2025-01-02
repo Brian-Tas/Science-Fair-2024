@@ -26,6 +26,14 @@ function spliceOf(value, arr) {
     }
 }
 
+function MSE(answers, networkAnswers) {
+    const subtraction = answers.map((value, index) => value - networkAnswers[index]);
+    const squared = subtraction.map(value => value ** 2);
+    const average = avg(squared);
+
+    return average;
+}
+
 class Species {
     static checkSpeciesCount(pop) {
         return Math.max(Math.floor(4 * Math.log(0.4 * pop + 1)), 1);
@@ -249,7 +257,28 @@ class Population {
     }
 
     getSpeciesFitness() {
-        
+        for(let h = 0; h < this.species.length; h++) {
+            const sum = 0;
+
+            for(let i = 0; i < this.species[h].length; i++) {
+                
+            }
+        }
+    }
+
+    getFitness(index) {
+        let fitness = 0;
+        const rawArray = [];
+
+        for(let i = 0; i < this.gate.table.length; i++) {
+            const answer = this.run(index, this.gate.table[i][0]);
+
+            rawArray.push(MSE(this.gate.table[i][1], answer));
+        }
+
+        fitness = avg(rawArray);
+
+        return fitness;
     }
 
     logSpecies() {

@@ -24,4 +24,4 @@ const population = new Population("Test21", size, 'xor');
 population.speciate();
 
 population.logSpecies();
-console.log(population.species);
+console.log(population.getFitness(1));

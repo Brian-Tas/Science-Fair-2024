@@ -1,5 +1,13 @@
 const swap = (x, y) => [y, x];
-const XOR = (x, y) => x ^ y;
+const XOR = {
+  gate: (x, y) => x ^ y,
+  table: [
+    [[0,0], [0]],
+    [[1,0], [1]],
+    [[0,1], [1]],
+    [[1,1], [0]]
+  ]
+}
 const AND = (x , y) => +(x === y);
 const XOR3 = (x, y, z) => x ^ y ^ z;
 
