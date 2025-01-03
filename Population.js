@@ -6,6 +6,7 @@ const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 // Import innovation
 const { Innovation } = require("./NeuralNetwork/Innovation");
 const { NeuralNetwork } = require("./NeuralNetwork/NeuralNetwork");
+const { totalmem } = require("os");
 
 function avg(arr) {
     let sum = 0;
@@ -74,10 +75,13 @@ class Population {
             });
         }
 
+        this.avgFitness = null;
+        this.speciesFitness = [];
+        this.genomeFitnesses = [];
+
         this.networks = new Array(this.size);
         
         this.species = [Array.from({length: this.size}, (_, index) => index)];
-        this.speciesFitness = [];
 
         this.speciate();
     }
@@ -93,7 +97,7 @@ class Population {
             throw new Error(`Networks array and this.size are desynced at population. Size: ${this.size} networks length: ${this.networks.length}`);
         }
 
-        for(let i = 0; i < this.size; i++) {
+        for(let i = 0; i < this.genomes.length; i++) {
             this.check(i);
         }
     }
@@ -109,7 +113,7 @@ class Population {
     }
 
     updateNetwork(index) {
-        if((index > this.size - 1) || (index < 0)) {
+        if((index > this.genomes.length - 1) || (index < 0)) {
             throw new Error(`Invalid index at updateNetwork. Index: ${index} Size: ${index}`);
         }
 
@@ -231,10 +235,10 @@ class Population {
 
     speciate() {
         this.species = [];
-        const marked = new Array(this.size).fill(false); // [false, false, false...]
+        const marked = new Array(this.genomes.length).fill(false); // [false, false, false...]
 
         benchmarkLoop:
-        for(let h = 0 ; h < this.size; h++) {
+        for(let h = 0 ; h < this.genomes.length; h++) {
             if(marked[h]) {
                 continue benchmarkLoop;
             }
@@ -243,7 +247,7 @@ class Population {
             marked[h] = true;
 
             compareLoop:
-            for(let i = 0; i < this.size; i++) {
+            for(let i = 0; i < this.genomes.length; i++) {
                 if(marked[i]) {
                     continue compareLoop;
                 }
@@ -256,16 +260,6 @@ class Population {
         }
     }
 
-    getSpeciesFitness() {
-        for(let h = 0; h < this.species.length; h++) {
-            const sum = 0;
-
-            for(let i = 0; i < this.species[h].length; i++) {
-                
-            }
-        }
-    }
-
     getFitness(index) {
         let fitness = 0;
         const rawArray = [];
@@ -273,12 +267,20 @@ class Population {
         for(let i = 0; i < this.gate.table.length; i++) {
             const answer = this.run(index, this.gate.table[i][0]);
 
-            rawArray.push(MSE(this.gate.table[i][1], answer));
+            rawArray.push(1 - MSE(this.gate.table[i][1], answer));
         }
 
         fitness = avg(rawArray);
 
         return fitness;
+    }
+
+    getAllFitnesses() {
+        this.genomeFitnesses = [];
+
+        for(let i = 0; i < this.genomes.length; i++) {
+            this.genomeFitnesses.push(this.getFitness(i));
+        }
     }
 
     logSpecies() {
@@ -294,8 +296,53 @@ class Population {
     }
 
     evolve() {
-        // Sort genomes into species
+        this.speciate();
+        this.getAllFitnesses();
+
+        const speciesFitness = [];
+
+        for(let i = 0; i < this.species.length; i++){
+            let sum = 0;
+
+            for(let  h = 0; h < this.species[i].length; h++) {
+                sum += this.genomeFitnesses[this.species[i][h]];
+            }
+    
+            speciesFitness.push(
+                sum / this.species[i].length
+            );
+        }
+
+        const totalFitness = speciesFitness.reduce((accumulator, currentValue) => accumulator + currentValue, 0); // sums all fitnesses into one value
+        const newSpeciesSizes = [];
+
+        for(let i = 0; i < speciesFitness.length; i++) {
+            const preportion = speciesFitness[i] / totalFitness;
+            const newSpeciesSize = Math.round(this.size * preportion);
+
+            newSpeciesSizes.push(newSpeciesSize);
+        }
+
+        console.log(newSpeciesSizes);
+        console.log(speciesFitness);
+
+        const newGenomes = [];
     }
+
+    crossover(index1, index2) {
+        let newGenome = {
+            innovs: [
+                [],
+                []
+            ],
+            
+            neurons: [
+
+            ]
+        }
+    }
+
+
 
     static gates = new Map([
         ['xor', XOR],

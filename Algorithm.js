@@ -5,6 +5,7 @@ const settings = require("./Storage/Settings.json");
 
 settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
 settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
+const size = settings.population;
 
 /*
     Valid gates-
@@ -17,11 +18,15 @@ settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
 */
 
 
-const size = 1000//settings.population;
 
 const population = new Population("Test21", size, 'xor');
 
-population.speciate();
 
-population.logSpecies();
-console.log(population.getFitness(1));
+for(let i = 0; i < population.size; i++) {
+    for(let j = 0; j < 3; j++) {
+        population.mutate(i)
+    }
+}
+
+population.evolve();
+
