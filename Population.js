@@ -348,9 +348,6 @@ class Population {
         const fitness1 = this.genomeFitnesses[index1];
         const fitness2 = this.genomeFitnesses[index2];
 
-        const length1 = genome1.innovs[0].length;
-        const length2 = genome2.innovs[0].length;
-
         let newGenome = {
             innovs: [
                 [],
