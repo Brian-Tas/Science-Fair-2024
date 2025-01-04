@@ -27,6 +27,6 @@ for(let i = 0; i < population.size; i++) {
         population.mutate(i)
     }
 }
-
+population.crossover(1, 2);
 population.evolve();
 

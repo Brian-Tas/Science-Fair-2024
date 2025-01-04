@@ -127,6 +127,14 @@ const mutate = (network, mutationChance = null) => {
 
         network.changeWeight(weightChangedIndices[i], shift);
     }
+
+    const paired = network.genome.innovs[0].map((innovation, index) => [innovation, network.genome.innovs[1][index]]);
+    paired.sort((a, b) => a[0] - b[0]);
+
+    network.genome.innovs[0] = paired.map(pair => pair[0]);
+    network.genome.innovs[1] = paired.map(pair => pair[1]);
+
+    network.update();
 }
 
 module.exports = { mutate }

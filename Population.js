@@ -272,14 +272,12 @@ class Population {
 
         fitness = avg(rawArray);
 
-        return fitness;
+        this.genomeFitnesses[index] = fitness;
     }
 
     getAllFitnesses() {
-        this.genomeFitnesses = [];
-
         for(let i = 0; i < this.genomes.length; i++) {
-            this.genomeFitnesses.push(this.getFitness(i));
+            this.getFitness(i);
         }
     }
 
@@ -323,13 +321,19 @@ class Population {
             newSpeciesSizes.push(newSpeciesSize);
         }
 
-        console.log(newSpeciesSizes);
-        console.log(speciesFitness);
-
         const newGenomes = [];
     }
 
     crossover(index1, index2) {
+        const genome1 = this.genomes[index1];
+        const genome2 = this.genomes[index2];
+
+        this.getFitness(index1);
+        this.getFitness(index2);
+
+        const fitness1 = this.genomeFitnesses[index1];
+        const fitness2 = this.genomeFitnesses[index2];
+
         let newGenome = {
             innovs: [
                 [],
@@ -340,6 +344,20 @@ class Population {
 
             ]
         }
+
+        let [sensors, hiddens, outputs] = [[], [], []];
+        
+        sensors = [...this.defaultGenome.neurons[0]] // Sets genome sensors to default genome
+        hiddens = [...new Set([...genome1.neurons[1], ...genome2.neurons[1]])] // Makes array of hiddens from both genomes without duplicates
+        outputs = [...this.defaultGenome.neurons[2]] // Sets newGenome outputs to default genome
+
+        newGenome.neurons = [sensors, hiddens, outputs];
+
+        this.render(index1);
+        this.render(index2);
+
+        console.log(genome1.innovs[1]);
+        console.log(genome2.innovs[1]);
     }
 
 
