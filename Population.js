@@ -49,6 +49,8 @@ class Species {
             }
         }
 
+        finalUnion.sort((a,b) => a-b);
+
         return finalUnion;
     }
 
@@ -346,14 +348,6 @@ class Population {
         const fitness1 = this.genomeFitnesses[index1];
         const fitness2 = this.genomeFitnesses[index2];
 
-        let higherFitnessParentWeights = null;
-
-        if(fitness1 > fitness2) {
-            higherFitnessParentWeights = genome1.innovs[1];
-        } else {
-            higherFitnessParentWeights = genome2.innovs[1];
-        }
-
         const length1 = genome1.innovs[0].length;
         const length2 = genome2.innovs[0].length;
 
@@ -378,16 +372,58 @@ class Population {
 
         let [sensors, hiddens, outputs] = [[], [], []];
         
-        sensors = [...this.defaultGenome.neurons[0]] // Sets genome sensors to default genome
+        sensors = [...this.defaultGenome.neurons[0]]; // Sets genome sensors to default genome
         hiddens = [...new Set([...genome1.neurons[1], ...genome2.neurons[1]])] // Makes array of hiddens from both genomes without duplicates
-        outputs = [...this.defaultGenome.neurons[2]] // Sets newGenome outputs to default genome
+        outputs = [...this.defaultGenome.neurons[2]]; // Sets newGenome outputs to default genome
 
         newGenome.neurons = [sensors, hiddens, outputs];
 
-        console.log(genome1.innovs[0]);
-        console.log(genome2.innovs[0]);
+        const combined = Species.innovUnion(genome1.innovs[0], genome2.innovs[0]);
 
-        console.log(Species.innovUnion(genome1.innovs[0], genome2.innovs[0]));
+        const newInnovs = [];
+        const newWeights = [];
+
+        for(let i = 0; i < combined.length; i++) {
+            const inG1 = genome1.innovs[0].includes(combined[i]);
+            const inG2 = genome2.innovs[0].includes(combined[i]);
+
+            newInnovs.push(combined[i]);
+
+            let innovIndex = -1;
+
+            if(inG1 && inG2) {
+                let ratio = null;
+
+                if(fitness1 === 0 && fitness2 === 0) {
+                    ratio = 0.5;
+                } else {
+                    ratio = fitness1 / (fitness1 + fitness2);
+                }
+
+                if(Math.random() < ratio) {
+                    // Parent 1's weight is chosen
+                    innovIndex = genome1.innovs[0].indexOf(combined[i]);
+                    newWeights.push(genome1.innovs[1][innovIndex]);
+                } else {
+                    // parent 2 weight is chosen
+                    innovIndex = genome2.innovs[0].indexOf(combined[i])
+                    newWeights.push(genome2.innovs[1][innovIndex]);
+                }
+                
+            } else if(inG1) {
+                innovIndex = genome1.innovs[0].indexOf(combined[i]);
+                newWeights.push(genome1.innovs[1][innovIndex]);
+            } else if(inG2) {
+                innovIndex = genome2.innovs[0].indexOf(combined[i]);
+                newWeights.push(genome2.innovs[1][innovIndex]);
+            } else {
+                throw new Error(`Combined contains innovation that is not in any of the crossover parents. Genome1.innovs[0]: ${genome1.innovs[0]} Genome2.innovs[0]: ${genome2.innovs[0]} Combined: ${combined}`);
+            }
+        }
+
+        newGenome.innovs = [ newInnovs, newWeights ];
+
+        return newGenome;
     }
 
 

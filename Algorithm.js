@@ -23,8 +23,8 @@ const population = new Population("Test21", size, 'xor');
 
 
 for(let i = 0; i < population.size; i++) {
-    for(let j = 0; j < 3; j++) {
-        population.mutate(i)
+    for(let j = 0; j < 2; j++) {
+        population.mutate(i);
     }
 }
 population.crossover(1, 2);
