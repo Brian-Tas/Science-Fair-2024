@@ -1,5 +1,5 @@
-const settings = require("../Storage/Settings.json");
-const { Innovation } = require("../NeuralNetwork/Innovation");
+const settings = require("./Storage/Settings.json");
+const { Innovation } = require("./NeuralNetwork/Innovation");
 
 const mutate = (network, mutationChance = null) => {
     // Get array of new neurons

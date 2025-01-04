@@ -1,5 +1,5 @@
 const settings = require("./Storage/Settings.json");
-const { mutate } = require("./Operations/Mutate");
+const { mutate } = require("./Mutate");
 const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
 
 
@@ -38,6 +38,18 @@ function MSE(answers, networkAnswers) {
 class Species {
     static checkSpeciesCount(pop) {
         return Math.max(Math.floor(4 * Math.log(0.4 * pop + 1)), 1);
+    }
+
+    static innovUnion(innovations1, innovations2) {
+        const finalUnion = [...innovations1];
+
+        for(let i = 0; i < innovations2.length; i++) {
+            if(!finalUnion.includes(innovations2[i])) {
+                finalUnion.push(innovations2[i]);
+            }
+        }
+
+        return finalUnion;
     }
 
     static threshold = settings.speciation.threshhold;
@@ -334,6 +346,25 @@ class Population {
         const fitness1 = this.genomeFitnesses[index1];
         const fitness2 = this.genomeFitnesses[index2];
 
+        let higherFitnessParentWeights = null;
+
+        if(fitness1 > fitness2) {
+            higherFitnessParentWeights = genome1.innovs[1];
+        } else {
+            higherFitnessParentWeights = genome2.innovs[1];
+        }
+
+        const length1 = genome1.innovs[0].length;
+        const length2 = genome2.innovs[0].length;
+
+        let longest = null;
+
+        if(length1 > length2) {
+            longest = length1;
+        } else {
+            longest = length2;
+        }
+
         let newGenome = {
             innovs: [
                 [],
@@ -353,11 +384,10 @@ class Population {
 
         newGenome.neurons = [sensors, hiddens, outputs];
 
-        this.render(index1);
-        this.render(index2);
+        console.log(genome1.innovs[0]);
+        console.log(genome2.innovs[0]);
 
-        console.log(genome1.innovs[1]);
-        console.log(genome2.innovs[1]);
+        console.log(Species.innovUnion(genome1.innovs[0], genome2.innovs[0]));
     }
 
 
