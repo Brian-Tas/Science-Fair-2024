@@ -351,14 +351,6 @@ class Population {
         const length1 = genome1.innovs[0].length;
         const length2 = genome2.innovs[0].length;
 
-        let longest = null;
-
-        if(length1 > length2) {
-            longest = length1;
-        } else {
-            longest = length2;
-        }
-
         let newGenome = {
             innovs: [
                 [],
