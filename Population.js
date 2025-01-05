@@ -295,6 +295,11 @@ class Population {
         }
     }
 
+    updateAverageFitness() {
+        this.getAllFitnesses();
+        this.avgFitness = avg(this.genomeFitnesses);
+    }
+
     logSpecies() {
         for(let i = 0; i < this.species.length; i++) {
             const table = [];
@@ -312,6 +317,7 @@ class Population {
         this.getAllFitnesses();
 
         const speciesFitness = [];
+        const newGenomes = [];
 
         for(let i = 0; i < this.species.length; i++){
             let sum = 0;
@@ -335,7 +341,46 @@ class Population {
             newSpeciesSizes.push(newSpeciesSize);
         }
 
-        const newGenomes = [];
+        if(newSpeciesSizes.length !== this.species.length) {
+            throw new Error(`New species sizes arent matched to the species at evolve. New species: ${newSpeciesSizes} Species: ${this.species}`);
+        }
+
+        for(let j = 0; j < this.species.length; j++) {
+            const targetSize = newSpeciesSizes[j];
+            const species = this.species[j];
+
+            const fitnesses = [];
+
+            for(let i = 0; i < species.length; i++) {
+                fitnesses.push(this.genomeFitnesses[species[i]]);
+            }
+            
+            const preportions = fitnesses.map(num => num / (speciesFitness[j] * this.species[j].length));
+
+            const cumulativePreportions = [];
+            preportions.reduce((sum, value) => {
+                cumulativePreportions.push(sum + value);
+                return sum + value;
+            }, 0);
+
+            for(let i = 0; i < targetSize; i++) {
+                const random1 = Math.random();
+                const random2 = Math.random();
+    
+                const parent1 = this.species[j][cumulativePreportions.findIndex(c => random1 < c)];
+                const parent2 = this.species[j][cumulativePreportions.findIndex(c => random2 < c)];
+
+                newGenomes.push(
+                    this.crossover(parent1, parent2)
+                );
+            }
+        }
+
+        this.genomes = newGenomes;
+
+        for(let i = 0; i < this.species.length; i++) {
+            this.mutate(i);
+        }
     }
 
     crossover(index1, index2) {

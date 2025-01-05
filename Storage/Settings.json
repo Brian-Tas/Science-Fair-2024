@@ -9,16 +9,16 @@
     4, 5, 6
   ],
 
-  "population": 9,
+  "population": 100,
 
   "mutation": {
     "maxWeightAffect": 0.5,
     "newConnectionWeightRange": [-0.5, 0.5],
     "weightChangeRange": [-0.25, 0.25],
     "odds": {
-      "newNeuron": 0.015,
-      "newConnection": 0.0125,
-      "weightChange": 0.08
+      "newNeuron": 0.0003,
+      "newConnection": 0.0003,
+      "weightChange": 0.03
     }
   },
 

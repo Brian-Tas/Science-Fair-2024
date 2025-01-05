@@ -27,6 +27,11 @@ for(let i = 0; i < population.size; i++) {
         population.mutate(i);
     }
 }
-population.crossover(1, 2);
-population.evolve();
 
+for(let i = 0; i < 100; i++) {
+    population.evolve();
+    console.log(i);
+    population.updateAverageFitness();
+    console.log(population.avgFitness);
+    population.render(1)
+}
