@@ -19,16 +19,8 @@ function avg(arr) {
     return sum / length;
 }
 
-function spliceOf(value, arr) {
-    try {
-        arr.splice(arr.indexOf(value), 1);
-    } catch(err) {
-        console.error(err);
-    }
-}
-
 function MSE(answers, networkAnswers) {
-    const subtraction = answers.map((value, index) => value - networkAnswers[index]);
+    const subtraction = answers.map((value, index) => Math.tanh(value) - networkAnswers[index]);
     const squared = subtraction.map(value => value ** 2);
     const average = avg(squared);
 
@@ -378,7 +370,7 @@ class Population {
 
         this.genomes = newGenomes;
 
-        for(let i = 0; i < this.species.length; i++) {
+        for(let i = 0; i < this.genomes.length; i++) {
             this.mutate(i);
         }
     }

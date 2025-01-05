@@ -19,7 +19,7 @@ const size = settings.population;
 
 
 
-const population = new Population("Test21", size, 'xor');
+const population = new Population("Blank21", size, 'xor');
 
 
 for(let i = 0; i < population.size; i++) {
@@ -28,9 +28,10 @@ for(let i = 0; i < population.size; i++) {
     }
 }
 
-for(let i = 0; i < 1000; i++) {
+for(let i = 0; i < 100; i++) {
     population.evolve();
-    console.log(i);
     population.updateAverageFitness();
     console.log(population.avgFitness);
 }
+
+console.log(population.species);
