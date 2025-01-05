@@ -84,6 +84,7 @@ class Population {
         this.avgFitness = null;
         this.speciesFitness = [];
         this.genomeFitnesses = [];
+        this.generation = 0;
 
         this.networks = new Array(this.size);
         
@@ -373,6 +374,8 @@ class Population {
         for(let i = 0; i < this.genomes.length; i++) {
             this.mutate(i);
         }
+
+        this.generation++;
     }
 
     crossover(index1, index2) {

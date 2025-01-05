@@ -8,7 +8,7 @@
     4, 5, 6
   ],
 
-  "population": 100,
+  "population": 150,
 
   "mutation": {
     "maxWeightAffect": 0.5,
