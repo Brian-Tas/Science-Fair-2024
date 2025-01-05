@@ -28,10 +28,9 @@ for(let i = 0; i < population.size; i++) {
     }
 }
 
-for(let i = 0; i < 100; i++) {
+for(let i = 0; i < 1000; i++) {
     population.evolve();
     console.log(i);
     population.updateAverageFitness();
     console.log(population.avgFitness);
-    population.render(1)
 }
