@@ -20,7 +20,7 @@ const size = settings.population;
 
 
 
-const population = new Population("Blank21", size, 'xor');
+const population = new Population("Blank21", size, 'and');
 population.updateAverageFitness();
 
 const startingAvgFitness = population.avgFitness;
@@ -31,22 +31,35 @@ function updateConsole() {
     
     // Write the updated values
     process.stdout.write(`Average Fitness: ${population.avgFitness}\n`);
-    process.stdout.write(`Iteration: ${population.generation}`);
+    process.stdout.write(`Iteration: ${population.generation}\n`);
+    process.stdout.write(`Species: ${population.species.length}`)
+    
+    
 }
 
 for(let i = 0; i < population.size; i++) {
-    for(let j = 0; j < 2; j++) {
+    for(let j = 0; j < 10; j++) {
         population.mutate(i);
     }
 }
 
-for(let i = 0; i < 20; i++) {
+for(let i = 0; i < 100; i++) {
     population.evolve();
     population.updateAverageFitness();
     updateConsole();
+
+    if(i === 99) {
+        debugger;
+    }
 }
+
+process.stdout.write(`\n`);
 
 process.stdout.write(`\n`);
 process.stdout.write(`Fitness Change: ${population.avgFitness - startingAvgFitness}`);
 
+
 process.stdout.write(`\n`);
+
+console.log(population.species);
+population.render(1);

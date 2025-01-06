@@ -15,9 +15,9 @@
     "newConnectionWeightRange": [-0.5, 0.5],
     "weightChangeRange": [-0.25, 0.25],
     "odds": {
-      "newNeuron": 0.0003,
-      "newConnection": 0.0003,
-      "weightChange": 0.03
+      "newNeuron": 0.00007,
+      "newConnection": 0.00007,
+      "weightChange": 0.01
     }
   },
 
@@ -29,7 +29,7 @@
 
   "speciation": {
     "targetSpecies": 5,
-    "threshhold": 1,
+    "threshhold": 1.05,
     "missRefactorConst": 0.1,
     "1comment": "If actual species is differant than target, actualSpecies - targetSpecies * missRefactorConst = threshhold change"
   }

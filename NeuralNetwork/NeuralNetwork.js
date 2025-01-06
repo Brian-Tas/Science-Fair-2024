@@ -46,10 +46,9 @@ class NeuralNetwork {
           )
         );    
 
-        this.neurons.set(typeMap[i], this.genome.neurons[i]);
         neuronCounter++;
       }
-
+      this.neurons.set(typeMap[i], this.genome.neurons[i]);
     }
 
     this.neurons.set(0, new Neuron(0, typeMap[3]));
@@ -57,7 +56,7 @@ class NeuralNetwork {
 
     this.neurons.set('length', neuronCounter);
 
-    this.neurons.set('all', [this.neurons.get('sensors'), this.neurons.get('hiddens'), this.neurons.get('outputs')].flat())
+    this.neurons.set('all', [...this.neurons.get('sensors'), ...this.neurons.get('hiddens'), ...this.neurons.get('outputs')])
 
     // Create connector map
     let connectorCounter = 0;

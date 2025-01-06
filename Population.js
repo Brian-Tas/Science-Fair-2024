@@ -20,11 +20,10 @@ function avg(arr) {
 }
 
 function MSE(answers, networkAnswers) {
-    const subtraction = answers.map((value, index) => Math.tanh(value) - networkAnswers[index]);
-    const squared = subtraction.map(value => value ** 2);
-    const average = avg(squared);
+    const subtraction = answers.map((value, index) => Math.abs((Math.tanh(value * 2 - 1) / 2 + 0.5) - networkAnswers[index]));
+    const average = avg(subtraction);
 
-    return average;
+    return average
 }
 
 class Species {
@@ -242,27 +241,33 @@ class Population {
 
     speciate() {
         this.species = [];
-        const marked = new Array(this.genomes.length).fill(false); // [false, false, false...]
 
-        benchmarkLoop:
-        for(let h = 0 ; h < this.genomes.length; h++) {
-            if(marked[h]) {
-                continue benchmarkLoop;
+        for(let i = 0; i < this.genomes.length; i++) {
+            let added = false;
+
+            for(const species of this.species) {
+                const representative = species[0];
+                const distance = this.compare(i, representative);
+
+                if(distance < Species.threshold) {
+                    species.push(i);
+                    added = true;
+                    break;
+                }
             }
 
-            this.species.push( [ h ] );
-            marked[h] = true;
+            if(!added) {
+                this.species.push([i]);
+            }
+        }
 
-            compareLoop:
-            for(let i = 0; i < this.genomes.length; i++) {
-                if(marked[i]) {
-                    continue compareLoop;
-                }
+        if(this.species.length === 0) {
+            throw new Error(`Species length is 0`);
+        }
 
-                if(this.compare(h, i) < Species.threshold) {
-                    this.species[this.species.length - 1].push(i);
-                    marked[i] = true;
-                }
+        for(let i = 0; i > this.species.length; i++) {
+            if(this.species[i].length === 0) {
+                throw new Error(`Generation containts empty species: ${this.species}`);
             }
         }
     }
@@ -271,10 +276,12 @@ class Population {
         let fitness = 0;
         const rawArray = [];
 
+        debugger;
+
         for(let i = 0; i < this.gate.table.length; i++) {
             const answer = this.run(index, this.gate.table[i][0]);
 
-            rawArray.push(1 - MSE(this.gate.table[i][1], answer));
+            rawArray.push(MSE(this.gate.table[i][1], answer));
         }
 
         fitness = avg(rawArray);
@@ -331,9 +338,10 @@ class Population {
             const preportion = speciesFitness[i] / totalFitness;
             const newSpeciesSize = Math.round(this.size * preportion);
 
+            
             newSpeciesSizes.push(newSpeciesSize);
         }
-
+        
         if(newSpeciesSizes.length !== this.species.length) {
             throw new Error(`New species sizes arent matched to the species at evolve. New species: ${newSpeciesSizes} Species: ${this.species}`);
         }
