@@ -43,7 +43,7 @@ for(let i = 0; i < population.size; i++) {
     }
 }
 
-for(let i = 0; i < 100; i++) {
+for(let i = 0; i < 125; i++) {
     population.evolve();
     population.updateAverageFitness();
     updateConsole();
@@ -61,6 +61,4 @@ process.stdout.write(`Fitness Change: ${population.avgFitness - startingAvgFitne
 
 process.stdout.write(`\n`);
 
-console.log(population.species);
-population.render(1);
 population.logSpecies();

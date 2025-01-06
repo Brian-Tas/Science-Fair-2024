@@ -346,17 +346,33 @@ class Population {
             throw new Error(`New species sizes arent matched to the species at evolve. New species: ${newSpeciesSizes} Species: ${this.species}`);
         }
 
+        const propogationPercent = settings.propogationPercent;
+
         for(let j = 0; j < this.species.length; j++) {
             const targetSize = newSpeciesSizes[j];
             const species = this.species[j];
 
             const fitnesses = [];
 
+            // Only add highest % of genomes as of propogationPercent
+            const percentageAmount = Math.ceil(species.length * propogationPercent);
+
             for(let i = 0; i < species.length; i++) {
                 fitnesses.push(this.genomeFitnesses[species[i]]);
             }
             
-            const preportions = fitnesses.map(num => num / (speciesFitness[j] * this.species[j].length));
+            const sortedFitness = [...fitnesses].sort((a,b) => a-b);
+
+            sortedFitness.splice(0, sortedFitness.length - percentageAmount);
+
+            for(let i = 0; i < fitnesses.length; i++) {
+                if(!sortedFitness.includes(fitnesses[i])) {
+                    fitnesses[i] = 0;
+                }
+            }
+
+
+            const preportions = fitnesses.map(num => num / (sortedFitness.reduce((accumulator, currentValue) => accumulator + currentValue, 0)));
 
             const cumulativePreportions = [];
             preportions.reduce((sum, value) => {
