@@ -63,3 +63,4 @@ process.stdout.write(`\n`);
 
 console.log(population.species);
 population.render(1);
+population.logSpecies();

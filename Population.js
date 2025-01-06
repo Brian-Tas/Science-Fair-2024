@@ -20,10 +20,10 @@ function avg(arr) {
 }
 
 function MSE(answers, networkAnswers) {
-    const subtraction = answers.map((value, index) => Math.abs((Math.tanh(value * 2 - 1) / 2 + 0.5) - networkAnswers[index]));
+    const subtraction = answers.map((value, index) => 1 - (Math.abs((Math.tanh(value * 2 - 1) / 2 + 0.5) - networkAnswers[index])));
     const average = avg(subtraction);
 
-    return average
+    return average;
 }
 
 class Species {
