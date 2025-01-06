@@ -9,10 +9,10 @@ const size = settings.population;
 
 /*
     Valid gates-
-    xor, xor3, and, swap
+    xor, xor3, and, swap, same
 
     Path is just file name- i.e.
-    Test21, Blank21
+    Test21, Blank21, Blank11
 
     Population args -> path, size, gate
 */
@@ -20,7 +20,7 @@ const size = settings.population;
 
 
 
-const population = new Population("Blank21", size, 'and');
+const population = new Population("Blank11", size, 'same');
 population.updateAverageFitness();
 
 const startingAvgFitness = population.avgFitness;
@@ -38,12 +38,12 @@ function updateConsole() {
 }
 
 for(let i = 0; i < population.size; i++) {
-    for(let j = 0; j < 10; j++) {
+    for(let j = 0; j < 1; j++) {
         population.mutate(i);
     }
 }
 
-for(let i = 0; i < 125; i++) {
+for(let i = 0; i < 100; i++) {
     population.evolve();
     population.updateAverageFitness();
     updateConsole();
@@ -54,11 +54,9 @@ for(let i = 0; i < 125; i++) {
 }
 
 process.stdout.write(`\n`);
-
 process.stdout.write(`\n`);
 process.stdout.write(`Fitness Change: ${population.avgFitness - startingAvgFitness}`);
 
-
 process.stdout.write(`\n`);
 
-population.logSpecies();
+console.log(population.genomeFitnesses);

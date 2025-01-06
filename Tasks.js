@@ -1,4 +1,11 @@
 const swap = (x, y) => [y, x];
+const same = {
+  gate: x => x,
+  table: [
+    [[0], [0]],
+    [[1], [1]]
+  ]
+}
 const XOR = {
   gate: (x, y) => x ^ y,
   table: [
@@ -59,4 +66,4 @@ const getAnswers = (neuralNetwork, gate) => {
 }
 
 
-module.exports = { getAnswers, swap, XOR, AND, XOR3 }
+module.exports = { getAnswers, swap, XOR, AND, XOR3, same }

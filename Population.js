@@ -1,6 +1,6 @@
 const settings = require("./Storage/Settings.json");
 const { mutate } = require("./Mutate");
-const { getAnswers, swap, XOR, AND, XOR3 } = require("./Tasks");
+const { getAnswers, swap, XOR, AND, XOR3, same } = require("./Tasks");
 
 
 // Import innovation
@@ -485,7 +485,8 @@ class Population {
         ['xor', XOR],
         ['xor3', XOR3],
         ['and', AND],
-        ['swap', swap]
+        ['swap', swap],
+        ['same', same]
     ]);
 }
 
