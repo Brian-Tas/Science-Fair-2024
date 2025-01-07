@@ -15,7 +15,7 @@ const size = settings.population;
     xor, xor3, and, swap, same
 
     Path is just file name- i.e.
-    Test21, Blank21, Blank11
+    Test21, Blank21, Blank11, Blank22
 
     Population args -> path, size, gate
 */
@@ -34,24 +34,30 @@ function updateConsole(population, itteration) {
 
 const dataArray = [];
 
-for(let j = 0; j < 20; j++) {
+for(let j = 0; j < 40; j++) {
     const population = new Population("Blank11", size, 'same');
     population.updateAverageFitness();
     
     for(let i = 0; i < population.size; i++) {
-        for(let j = 0; j < 1; j++) {
+        for(let j = 0; j < 2; j++) {
             population.mutate(i);
         }
     }
-
-    const averageArray = [];
     
-    for(let i = 0; i < 125; i++) {
+    const averageArray = [];
+    for(let i = 0; i < 200; i++) {
+        const genStart = Date.now();
+
         population.evolve();
         population.updateAverageFitness();
         updateConsole(population, j);
+        const time = Date.now();
 
         averageArray.push(population.avgFitness);
+
+        if(Date.now() - genStart > 500) {
+            break;
+        }
 
         if(population.avgFitness > 0.98) {
             break;

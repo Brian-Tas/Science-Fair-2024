@@ -1,4 +1,13 @@
-const swap = (x, y) => [y, x];
+const swap = {
+  gate: (x, y) => [y, x],
+  table: [
+    [[0, 0], [0, 0]],
+    [[0, 1], [1, 0]],
+    [[1, 0], [0, 1]],
+    [[1, 1], [1, 1]]
+  ]
+}
+
 const same = {
   gate: x => x,
   table: [
@@ -6,6 +15,7 @@ const same = {
     [[1], [1]]
   ]
 }
+
 const XOR = {
   gate: (x, y) => x ^ y,
   table: [
@@ -26,7 +36,19 @@ const AND = {
   ]
 }
 
-const XOR3 = (x, y, z) => x ^ y ^ z;
+const XOR3 = {
+  gate: (x, y, z) => x ^ y ^ z,
+  table: [
+      [[0, 0, 0], [0]],
+      [[0, 0, 1], [1]],
+      [[0, 1, 0], [1]],
+      [[0, 1, 1], [0]],
+      [[1, 0, 0], [1]],
+      [[1, 0, 1], [0]],
+      [[1, 1, 0], [0]],
+      [[1, 1, 1], [1]]
+  ]
+}
 
 
 // Makes all combinations for an amount of inputs

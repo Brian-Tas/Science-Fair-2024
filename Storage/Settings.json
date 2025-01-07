@@ -15,8 +15,8 @@
     "newConnectionWeightRange": [-0.5, 0.5],
     "weightChangeRange": [-0.21, 0.21],
     "odds": {
-      "newNeuron": 0.002,
-      "newConnection": 0.004,
+      "newNeuron": 0.001,
+      "newConnection": 0.002,
       "weightChange": 0.1
     }
   },
