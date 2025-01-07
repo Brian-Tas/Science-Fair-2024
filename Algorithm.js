@@ -1,7 +1,10 @@
+const { errorMonitor } = require("events");
 const { Innovation } = require("./NeuralNetwork/Innovation");
 const { Population } = require("./Population");
 
 const settings = require("./Storage/Settings.json");
+
+const fs = require(`fs`);
 
 settings.startingInnovationTable.forEach(innovation => Innovation.newInnovation(innovation));
 settings.startingNeurons.forEach(neuron => Innovation.addNeuron(neuron));
@@ -18,45 +21,53 @@ const size = settings.population;
 */
 
 
-
-
-const population = new Population("Blank11", size, 'same');
-population.updateAverageFitness();
-
-const startingAvgFitness = population.avgFitness;
-
-function updateConsole() {
+function updateConsole(population, itteration) {
     process.stdout.write(`\x1b[0;0H`); 
     process.stdout.write(`\x1b[2J`); 
     
     // Write the updated values
     process.stdout.write(`Average Fitness: ${population.avgFitness}\n`);
     process.stdout.write(`Iteration: ${population.generation}\n`);
-    process.stdout.write(`Species: ${population.species.length}`)
-    
-    
+    process.stdout.write(`Species: ${population.species.length}\n`);
+    process.stdout.write(`\nTotal Itterations: ${itteration}\n`);
 }
 
-for(let i = 0; i < population.size; i++) {
-    for(let j = 0; j < 1; j++) {
-        population.mutate(i);
-    }
-}
+const dataArray = [];
 
-for(let i = 0; i < 100; i++) {
-    population.evolve();
+for(let j = 0; j < 20; j++) {
+    const population = new Population("Blank11", size, 'same');
     population.updateAverageFitness();
-    updateConsole();
-
-    if(i === 99) {
-        debugger;
+    
+    for(let i = 0; i < population.size; i++) {
+        for(let j = 0; j < 1; j++) {
+            population.mutate(i);
+        }
     }
+
+    const averageArray = [];
+    
+    for(let i = 0; i < 125; i++) {
+        population.evolve();
+        population.updateAverageFitness();
+        updateConsole(population, j);
+
+        averageArray.push(population.avgFitness);
+
+        if(population.avgFitness > 0.98) {
+            break;
+        }
+    
+        if(i === 99) {
+            debugger;
+        }
+    }
+
+    dataArray.push(averageArray);
 }
+const JSONdata = JSON.stringify(dataArray, null, 2);
 
-process.stdout.write(`\n`);
-process.stdout.write(`\n`);
-process.stdout.write(`Fitness Change: ${population.avgFitness - startingAvgFitness}`);
-
-process.stdout.write(`\n`);
-
-console.log(population.genomeFitnesses);
+fs.writeFile(`./data.json`, JSONdata, 'utf8', function (err) {
+    if (err) {
+        throw new Error(err);
+    }
+});
